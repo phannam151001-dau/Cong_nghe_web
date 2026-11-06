@@ -1,0 +1,65 @@
+{% extends "bo_cuc_chung.html" %}
+{% load humanize %}
+
+{% block title %}Đặt Hàng Thành Công #{{ don_hang.id }} - Fashion Store{% endblock %}
+
+{% block content %}
+<div class="container py-5 text-center">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm rounded-4 p-5">
+                <div class="mb-4">
+                    <div class="rounded-circle bg-success-subtle text-success d-inline-flex p-4 mb-3">
+                        <i class="fa-solid fa-circle-check fa-4x text-success"></i>
+                    </div>
+                    <h2 class="fw-bold text-dark">Đặt Hàng Thành Công!</h2>
+                    <p class="text-muted">Cảm ơn quý khách <strong>{{ don_hang.ten_khach_hang }}</strong>. Mã đơn hàng của bạn là <strong>#{{ don_hang.id }}</strong>.</p>
+                </div>
+
+                <div class="text-start bg-light rounded-4 p-4 mb-4">
+                    <h6 class="fw-bold text-dark mb-3 border-bottom pb-2">Thông Tin Nhận Hàng</h6>
+                    <p class="small mb-1"><strong>Người nhận:</strong> {{ don_hang.ten_khach_hang }} ({{ don_hang.so_dien_thoai }})</p>
+                    {% if don_hang.email %}
+                    <p class="small mb-1"><strong>Email:</strong> {{ don_hang.email }}</p>
+                    {% endif %}
+                    <p class="small mb-1"><strong>Địa chỉ giao:</strong> {{ don_hang.dia_chi_giao_hang }}</p>
+                    {% if don_hang.ghi_chu %}
+                    <p class="small mb-1"><strong>Ghi chú:</strong> {{ don_hang.ghi_chu }}</p>
+                    {% endif %}
+                    <p class="small mb-0"><strong>Phương thức thanh toán:</strong> COD (Thanh toán tiền mặt khi nhận hàng)</p>
+                </div>
+
+                <!-- Danh sách sản phẩm trong đơn -->
+                <div class="text-start mb-4">
+                    <h6 class="fw-bold text-dark mb-3">Chi Tiết Sản Phẩm Đã Mua</h6>
+                    <ul class="list-group list-group-flush rounded-3 border">
+                        {% for item in don_hang.danh_sach_san_pham_dat.all %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+                            <div>
+                                <span class="fw-bold text-dark">{{ item.ten_san_pham }}</span>
+                                <div class="small text-muted">Kích thước: {{ item.kich_co }}{% if item.mau_sac %}, Màu: {{ item.mau_sac }}{% endif %} x {{ item.so_luong }}</div>
+                            </div>
+                            <span class="fw-bold text-danger">{{ item.tinh_thanh_tien|intcomma }}₫</span>
+                        </li>
+                        {% endfor %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center bg-light py-3">
+                            <span class="fw-bold fs-6">Tổng thanh toán:</span>
+                            <span class="fs-5 fw-bold text-danger">{{ don_hang.tong_tien|intcomma }}₫</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="alert alert-info small text-start mb-4">
+                    <i class="fa-solid fa-bell me-2"></i> Nhân viên của Fashion Store sẽ sớm liên hệ qua số điện thoại <strong>{{ don_hang.so_dien_thoai }}</strong> để xác nhận đơn hàng trước khi gửi đi!
+                </div>
+
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="{% url 'cua_hang:trang_chu' %}" class="btn btn-dark rounded-pill px-4 py-2">
+                        <i class="fa-solid fa-bag-shopping me-2"></i> Tiếp Tục Mua Sắm
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,177 @@
+{% extends "bo_cuc_chung.html" %}
+{% load humanize %}
+
+{% block title %}{{ san_pham.ten_san_pham }} - Fashion Store{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Breadcrumb điều hướng -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb small">
+            <li class="breadcrumb-item"><a href="{% url 'cua_hang:trang_chu' %}" class="text-secondary text-decoration-none">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a href="{{ san_pham.danh_muc.get_absolute_url }}" class="text-secondary text-decoration-none">{{ san_pham.danh_muc.ten_danh_muc }}</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ san_pham.ten_san_pham }}</li>
+        </ol>
+    </nav>
+
+    <div class="row g-5">
+        <!-- Ảnh lớn của sản phẩm -->
+        <div class="col-lg-6">
+            <div class="border rounded-4 overflow-hidden bg-light shadow-sm" style="min-height: 480px;">
+                {% if san_pham.hinh_anh %}
+                    <img src="{{ san_pham.hinh_anh.url }}" alt="{{ san_pham.ten_san_pham }}" class="w-100 h-100 object-fit-cover" style="max-height: 550px; object-fit: cover;">
+                {% else %}
+                    <img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800&auto=format&fit=crop&q=80" alt="{{ san_pham.ten_san_pham }}" class="w-100 h-100 object-fit-cover" style="max-height: 550px; object-fit: cover;">
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Thông tin và hành động mua hàng -->
+        <div class="col-lg-6">
+            <span class="badge bg-secondary mb-2 text-uppercase">{{ san_pham.danh_muc.ten_danh_muc }}</span>
+            <h1 class="h2 fw-bold text-dark mb-3">{{ san_pham.ten_san_pham }}</h1>
+
+            <!-- Giá bán -->
+            <div class="d-flex align-items-center mb-4">
+                <span class="display-6 fw-bold text-danger">{{ san_pham.gia_ban|intcomma }}₫</span>
+                {% if san_pham.gia_goc %}
+                    <span class="fs-5 text-muted text-decoration-line-through ms-3">{{ san_pham.gia_goc|intcomma }}₫</span>
+                    <span class="badge bg-danger ms-2">-{{ san_pham.phan_tram_giam_gia }}%</span>
+                {% endif %}
+            </div>
+
+            <!-- Form thêm vào giỏ hàng -->
+            <form action="{% url 'gio_hang:them_vao_gio' san_pham.id %}" method="POST" class="mb-4">
+                {% csrf_token %}
+
+                <!-- Tùy chọn Size -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold small text-uppercase">Chọn Kích Thước (Size):</label>
+                    <div class="d-flex flex-wrap gap-2">
+                        {% for kc in san_pham.danh_sach_kich_co %}
+                        <input type="radio" class="btn-check" name="kich_co" id="size_{{ forloop.counter }}" value="{{ kc }}" {% if forloop.first %}checked{% endif %}>
+                        <label class="btn btn-outline-dark px-3 py-2 fw-semibold" for="size_{{ forloop.counter }}">{{ kc }}</label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Tùy chọn Màu sắc -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold small text-uppercase">Chọn Màu Sắc:</label>
+                    <div class="d-flex flex-wrap gap-2">
+                        {% for ms in san_pham.danh_sach_mau_sac %}
+                        <input type="radio" class="btn-check" name="mau_sac" id="color_{{ forloop.counter }}" value="{{ ms }}" {% if forloop.first %}checked{% endif %}>
+                        <label class="btn btn-outline-secondary px-3 py-2 fw-semibold" for="color_{{ forloop.counter }}">{{ ms }}</label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Chọn số lượng -->
+                <div class="mb-4">
+                    <label class="form-label fw-bold small text-uppercase">Số lượng:</label>
+                    <div class="input-group" style="width: 140px;">
+                        <button type="button" class="btn btn-outline-secondary" onclick="giamSoLuong()">-</button>
+                        <input type="number" name="so_luong" id="oNhapSoLuong" value="1" min="1" max="{{ san_pham.so_luong_kho }}" class="form-control text-center fw-bold">
+                        <button type="button" class="btn btn-outline-secondary" onclick="tangSoLuong()">+</button>
+                    </div>
+                    <small class="text-muted d-block mt-1">Còn {{ san_pham.so_luong_kho }} sản phẩm trong kho</small>
+                </div>
+
+                <!-- Nút thao tác -->
+                <div class="row g-2">
+                    <div class="col-sm-6">
+                        <button type="submit" name="hanh_dong" value="them_gio" class="btn btn-outline-dark btn-lg w-100 rounded-pill fw-bold">
+                            <i class="fa-solid fa-cart-plus me-2"></i> Thêm Vào Giỏ
+                        </button>
+                    </div>
+                    <div class="col-sm-6">
+                        <button type="submit" name="hanh_dong" value="mua_ngay" class="btn btn-danger btn-lg w-100 rounded-pill fw-bold">
+                            <i class="fa-solid fa-bolt me-2"></i> Mua Ngay
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Tiện ích cửa hàng -->
+            <div class="card border-0 bg-light rounded-3 p-3">
+                <div class="row g-2 small">
+                    <div class="col-6 d-flex align-items-center">
+                        <i class="fa-solid fa-shield-halved text-success me-2 fs-5"></i>
+                        <span>100% Chính hãng & Chất lượng</span>
+                    </div>
+                    <div class="col-6 d-flex align-items-center">
+                        <i class="fa-solid fa-rotate-left text-primary me-2 fs-5"></i>
+                        <span>Đổi trả dễ dàng trong 7 ngày</span>
+                    </div>
+                    <div class="col-6 d-flex align-items-center mt-2">
+                        <i class="fa-solid fa-box-open text-warning me-2 fs-5"></i>
+                        <span>Được kiểm tra hàng trước thanh toán</span>
+                    </div>
+                    <div class="col-6 d-flex align-items-center mt-2">
+                        <i class="fa-solid fa-truck-fast text-danger me-2 fs-5"></i>
+                        <span>Giao hàng toàn quốc 2-4 ngày</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mô tả chi tiết -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm rounded-4 p-4">
+                <h4 class="fw-bold mb-3 border-bottom pb-2">Mô Tả Chi Tiết Sản Phẩm</h4>
+                <div class="text-secondary" style="line-height: 1.8;">
+                    {{ san_pham.mo_ta|linebreaks }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sản phẩm liên quan cùng danh mục -->
+    {% if san_pham_lien_quan %}
+    <div class="mt-5">
+        <h4 class="fw-bold mb-4">Sản Phẩm Cùng Danh Mục</h4>
+        <div class="row g-4">
+            {% for sp_lq in san_pham_lien_quan %}
+            <div class="col-6 col-md-3">
+                <div class="product-card h-100 d-flex flex-column">
+                    <div class="product-img-wrap" style="height: 220px;">
+                        <a href="{{ sp_lq.get_absolute_url }}">
+                            {% if sp_lq.hinh_anh %}
+                                <img src="{{ sp_lq.hinh_anh.url }}" alt="{{ sp_lq.ten_san_pham }}" class="product-img">
+                            {% else %}
+                                <img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500&auto=format&fit=crop&q=80" alt="{{ sp_lq.ten_san_pham }}" class="product-img">
+                            {% endif %}
+                        </a>
+                    </div>
+                    <div class="p-3 d-flex flex-column flex-grow-1">
+                        <h6 class="fw-bold text-truncate mb-2">
+                            <a href="{{ sp_lq.get_absolute_url }}" class="text-dark text-decoration-none">{{ sp_lq.ten_san_pham }}</a>
+                        </h6>
+                        <span class="price-current mt-auto">{{ sp_lq.gia_ban|intcomma }}₫</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function tangSoLuong() {
+        let input = document.getElementById('oNhapSoLuong');
+        let max = parseInt(input.getAttribute('max')) || 999;
+        let val = parseInt(input.value) || 1;
+        if (val < max) input.value = val + 1;
+    }
+    function giamSoLuong() {
+        let input = document.getElementById('oNhapSoLuong');
+        let val = parseInt(input.value) || 1;
+        if (val > 1) input.value = val - 1;
+    }
+</script>
+{% endblock %}

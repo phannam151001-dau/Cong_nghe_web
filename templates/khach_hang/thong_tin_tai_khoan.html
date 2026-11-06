@@ -1,0 +1,62 @@
+{% extends "bo_cuc_chung.html" %}
+
+{% block title %}Cài Đặt Tài Khoản - Fashion Store{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-6">
+            <div class="card border-0 shadow rounded-4 p-4 p-md-5">
+                <div class="d-flex align-items-center mb-4">
+                    <div class="rounded-circle bg-dark text-white d-inline-flex p-3 me-3">
+                        <i class="fa-solid fa-user-gear fa-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="fw-bold text-dark mb-0">Hồ Sơ Của Tôi</h3>
+                        <p class="text-secondary small mb-0">Quản lý thông tin liên hệ và địa chỉ nhận hàng mặc định.</p>
+                    </div>
+                </div>
+
+                <form method="POST" action="{% url 'khach_hang:thong_tin_tai_khoan' %}">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Tên đăng nhập</label>
+                        <input type="text" class="form-control bg-light" value="{{ user.username }}" disabled>
+                        <small class="text-muted">Tên đăng nhập không thể thay đổi.</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Họ và tên</label>
+                        <input type="text" name="ho_ten" class="form-control" value="{{ user.first_name }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Địa chỉ Email</label>
+                        <input type="email" name="email" class="form-control" value="{{ user.email }}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Số điện thoại</label>
+                        <input type="tel" name="so_dien_thoai" class="form-control" value="{{ ho_so.so_dien_thoai }}">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold">Địa chỉ nhận hàng mặc định</label>
+                        <textarea name="dia_chi" class="form-control" rows="2">{{ ho_so.dia_chi }}</textarea>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-dark rounded-pill px-4 py-2 fw-semibold">
+                            <i class="fa-solid fa-floppy-disk me-1"></i> Lưu Thay Đổi
+                        </button>
+                        <a href="{% url 'khach_hang:lich_su_don_hang' %}" class="btn btn-outline-secondary rounded-pill px-3 py-2">
+                            Xem Lịch Sử Hóa Đơn
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

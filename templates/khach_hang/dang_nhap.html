@@ -1,0 +1,52 @@
+{% extends "bo_cuc_chung.html" %}
+
+{% block title %}Đăng Nhập Khách Hàng - Fashion Store{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card border-0 shadow rounded-4 p-4 p-md-5">
+                <div class="text-center mb-4">
+                    <div class="rounded-circle bg-dark-subtle text-dark d-inline-flex p-3 mb-2">
+                        <i class="fa-solid fa-right-to-bracket fa-2x"></i>
+                    </div>
+                    <h2 class="fw-bold text-dark">Đăng Nhập</h2>
+                    <p class="text-secondary small">Đăng nhập tài khoản để quản lý đơn hàng và hóa đơn của bạn.</p>
+                </div>
+
+                <form method="POST" action="{% url 'khach_hang:dang_nhap' %}">
+                    {% csrf_token %}
+                    {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Tên đăng nhập</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light"><i class="fa-solid fa-user text-muted"></i></span>
+                            <input type="text" name="ten_dang_nhap" class="form-control" required placeholder="Nhập tên tài khoản" value="{{ ten_dang_nhap|default:'' }}">
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <label class="form-label small fw-bold mb-0">Mật khẩu</label>
+                        </div>
+                        <div class="input-group mt-1">
+                            <span class="input-group-text bg-light"><i class="fa-solid fa-lock text-muted"></i></span>
+                            <input type="password" name="mat_khau" class="form-control" required placeholder="Nhập mật khẩu">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-dark btn-lg w-100 rounded-pill fw-bold py-3 shadow-sm mb-3">
+                        <i class="fa-solid fa-arrow-right-to-bracket me-2"></i> Đăng Nhập
+                    </button>
+
+                    <div class="text-center small text-secondary">
+                        Chưa có tài khoản? <a href="{% url 'khach_hang:dang_ky' %}" class="text-danger fw-bold text-decoration-none">Đăng ký thành viên mới</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

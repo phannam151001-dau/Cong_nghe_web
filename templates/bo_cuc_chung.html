@@ -1,0 +1,281 @@
+{% load static %}
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}FASHION STORE - Cửa Hàng Thời Trang Hiện Đại{% endblock %}</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #111827;
+            --accent-color: #e11d48;
+            --bg-light: #f9fafb;
+        }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #fdfdfd;
+            color: #1f2937;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .navbar-brand {
+            font-weight: 800;
+            letter-spacing: 1px;
+            font-size: 1.5rem;
+        }
+        .badge-cart {
+            font-size: 0.75rem;
+            position: absolute;
+            top: -5px;
+            right: -10px;
+        }
+        .product-card {
+            border: 1px solid #f1f5f9;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            background: #fff;
+            overflow: hidden;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.08);
+            border-color: #e2e8f0;
+        }
+        .product-img-wrap {
+            position: relative;
+            height: 280px;
+            overflow: hidden;
+            background-color: #f8fafc;
+        }
+        .product-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+        .product-card:hover .product-img {
+            transform: scale(1.05);
+        }
+        .discount-tag {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: #e11d48;
+            color: #fff;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+        .price-current {
+            font-weight: 700;
+            color: #e11d48;
+            font-size: 1.15rem;
+        }
+        .price-old {
+            font-size: 0.9rem;
+            text-decoration: line-through;
+            color: #94a3b8;
+            margin-left: 6px;
+        }
+        footer {
+            margin-top: auto;
+            background-color: #111827;
+            color: #9ca3af;
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+    <!-- THANH THÔNG BÁO TRÊN CÙNG (GỌN GÀNG, KHÔNG BỊ TRÙNG LẶP) -->
+    {% comment %} <div class="bg-dark text-white py-1 px-3 small d-none d-md-block">
+        <div class="container d-flex justify-content-between align-items-center">
+            <div>
+                <i class="fa-solid fa-truck-fast me-2 text-warning"></i>Miễn phí vận chuyển toàn quốc cho đơn từ 500.000₫ | Hotline: <strong>1900 6868</strong>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <span class="text-white-50"><i class="fa-solid fa-clock me-1 text-warning"></i> 08:30 - 22:00 (Hàng ngày)</span>
+                {% if user.is_staff %}
+                    <a href="/admin/" class="badge bg-secondary text-decoration-none px-2 py-1"><i class="fa-solid fa-gauge me-1"></i> Admin CMS</a>
+                {% endif %}
+            </div>
+        </div>
+    </div> {% endcomment %}
+
+    <!-- THANH ĐIỀU HƯỚNG CHÍNH (DÀN NGANG 1 DÒNG KHÔNG BỊ XUỐNG DÒNG) -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm py-2 py-lg-3">
+        <div class="container">
+            <!-- LOGO THƯƠNG HIỆU -->
+            <a class="navbar-brand text-dark d-flex align-items-center text-nowrap me-3 me-xl-4" href="{% url 'cua_hang:trang_chu' %}">
+                <i></i>
+                <span>FASHION<span class="text-danger">STORE</span></span>
+            </a>
+
+            <!-- NÚT MOBILE MENU -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- NỘI DUNG DÀN NGANG CO GIÃN THÔNG MINH -->
+            <div class="collapse navbar-collapse" id="navMenu">
+                <!-- Thanh tìm kiếm co giãn vừa vặn, không đẩy menu xuống dòng -->
+                <form class="d-flex mx-lg-3 my-2 my-lg-0 flex-grow-1" style="max-width: 340px;" method="GET" action="{% url 'cua_hang:trang_chu' %}">
+                    <div class="input-group">
+                        <input class="form-control rounded-start-pill ps-3" type="search" name="q" placeholder="Tìm kiếm sản phẩm..." value="{{ tu_khoa|default:'' }}">
+                        <button class="btn btn-dark rounded-end-pill px-3" type="submit">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </button>
+                    </div>
+                </form>
+
+                <!-- CÁC MỤC MENU DÀN NGANG CÙNG 1 HÀNG -->
+                <ul class="navbar-nav ms-auto align-items-center gap-1 gap-xl-2 text-nowrap">
+                    <li class="nav-item">
+                        <a class="nav-link fw-semibold px-2" href="{% url 'cua_hang:trang_chu' %}">Trang chủ</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle fw-semibold px-2" href="#" role="button" data-bs-toggle="dropdown">
+                            Danh mục
+                        </a>
+                        <ul class="dropdown-menu shadow-sm border-0">
+                            <li><a class="dropdown-item" href="{% url 'cua_hang:trang_chu' %}">Tất cả sản phẩm</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            {% for dm in cac_danh_muc %}
+                                <li><a class="dropdown-item" href="{{ dm.get_absolute_url }}">{{ dm.ten_danh_muc }}</a></li>
+                            {% empty %}
+                                <li><span class="dropdown-item text-muted">Chưa có danh mục</span></li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-semibold px-2" href="{% url 'cua_hang:gioi_thieu' %}">Giới thiệu</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-semibold px-2" href="{% url 'cua_hang:lien_he' %}">Liên hệ</a>
+                    </li>
+
+                    <!-- NÚT GIỎ HÀNG -->
+                    <li class="nav-item ms-lg-2">
+                        <a href="{% url 'gio_hang:xem_gio_hang' %}" class="btn btn-outline-dark position-relative rounded-pill px-3 py-2 text-nowrap">
+                            <i class="fa-solid fa-bag-shopping me-1"></i> Giỏ hàng
+                            <span class="badge bg-danger rounded-pill badge-cart">{{ so_luong_gio_hang|default:"0" }}</span>
+                        </a>
+                    </li>
+
+                    <!-- KHU VỰC TÀI KHOẢN KHÁCH HÀNG -->
+                    {% if user.is_authenticated %}
+                    <li class="nav-item dropdown ms-lg-2">
+                        <a class="btn btn-dark dropdown-toggle rounded-pill px-3 py-2 text-nowrap" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fa-solid fa-circle-user me-1"></i> {{ user.first_name|default:user.username }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
+                            <li><a class="dropdown-item" href="{% url 'khach_hang:lich_su_don_hang' %}"><i class="fa-solid fa-receipt text-danger me-2"></i>Lịch sử hóa đơn</a></li>
+                            <li><a class="dropdown-item" href="{% url 'khach_hang:thong_tin_tai_khoan' %}"><i class="fa-solid fa-user-pen text-primary me-2"></i>Cài đặt tài khoản</a></li>
+                            {% if user.is_staff %}
+                            <li><a class="dropdown-item" href="/admin/"><i class="fa-solid fa-gauge text-warning me-2"></i>Trang quản trị Admin</a></li>
+                            {% endif %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="{% url 'khach_hang:dang_xuat' %}"><i class="fa-solid fa-right-from-bracket me-2"></i>Đăng xuất</a></li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li class="nav-item ms-lg-2">
+                        <a href="{% url 'khach_hang:dang_nhap' %}" class="btn btn-dark rounded-pill px-3 py-2 text-nowrap">
+                            <i class="fa-solid fa-right-to-bracket me-1"></i> Đăng nhập
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- THÔNG BÁO FLASH MESSAGES (THÊM THÀNH CÔNG, LỖI...) -->
+    {% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show shadow-sm" role="alert">
+            <i class="fa-solid fa-circle-info me-2"></i> {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- NỘI DUNG CHÍNH (ĐƯỢC KẾ THỪA BỞI CÁC TRANG CON) -->
+    <main class="flex-grow-1">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- CHÂN TRANG (FOOTER) -->
+    <footer class="py-5">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <h5 class="text-white fw-bold mb-3"><i class="fa-solid fa-shirt text-danger me-2"></i>FASHION STORE</h5>
+                    <p class="small text-secondary">
+                        Cửa hàng thời trang cao cấp với phong cách hiện đại, thanh lịch và đón đầu xu hướng. Mang lại trải nghiệm mua sắm tiện ích và trang phục hoàn hảo nhất cho người mặc.
+                    </p>
+                    <div class="d-flex gap-3 text-secondary mt-3">
+                        <a href="#" class="text-secondary fs-5"><i class="fa-brands fa-facebook"></i></a>
+                        <a href="#" class="text-secondary fs-5"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" class="text-secondary fs-5"><i class="fa-brands fa-tiktok"></i></a>
+                        <a href="#" class="text-secondary fs-5"><i class="fa-brands fa-youtube"></i></a>
+                    </div>
+                </div>
+
+                <div class="col-lg-2 col-md-6">
+                    <h6 class="text-white fw-bold mb-3">Danh Mục</h6>
+                    <ul class="list-unstyled small">
+                        {% for dm in cac_danh_muc|slice:":5" %}
+                        <li class="mb-2"><a href="{{ dm.get_absolute_url }}" class="text-secondary text-decoration-none">{{ dm.ten_danh_muc }}</a></li>
+                        {% empty %}
+                        <li class="mb-2"><a href="{% url 'cua_hang:trang_chu' %}" class="text-secondary text-decoration-none">Tất cả sản phẩm</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <h6 class="text-white fw-bold mb-3">Chính Sách & Hỗ Trợ</h6>
+                    <ul class="list-unstyled small">
+                        <li class="mb-2"><a href="#" class="text-secondary text-decoration-none">Chính sách đổi trả trong 7 ngày</a></li>
+                        <li class="mb-2"><a href="#" class="text-secondary text-decoration-none">Chính sách bảo hành form dáng</a></li>
+                        <li class="mb-2"><a href="#" class="text-secondary text-decoration-none">Bảng hướng dẫn chọn size chuẩn</a></li>
+                        <li class="mb-2"><a href="#" class="text-secondary text-decoration-none">Phương thức thanh toán COD</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+                    <h6 class="text-white fw-bold mb-3">Thông Tin Liên Hệ</h6>
+                    <p class="small text-secondary mb-1"><i class="fa-solid fa-location-dot me-2 text-danger"></i> 123 Đường Thời Trang, Q.1, TP. Hồ Chí Minh</p>
+                    <p class="small text-secondary mb-1"><i class="fa-solid fa-phone me-2 text-danger"></i> Hotline: 1900 6868</p>
+                    <p class="small text-secondary mb-1"><i class="fa-solid fa-envelope me-2 text-danger"></i> Email: contact@fashionstore.vn</p>
+                    <p class="small text-secondary"><i class="fa-solid fa-clock me-2 text-danger"></i> Giờ làm việc: 08:30 - 22:00 hàng ngày</p>
+                </div>
+            </div>
+
+            <hr class="border-secondary my-4">
+            <div class="d-flex flex-wrap justify-content-between align-items-center small text-secondary">
+                <div>© 2026 Fashion Store. Xây dựng theo lộ trình Django HowKteam.</div>
+                <div>Lập trình với Python & Django Framework.</div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,114 @@
+{% extends "bo_cuc_chung.html" %}
+{% load humanize %}
+
+{% block title %}Hóa Đơn #HD{{ don_hang.id }} - Fashion Store{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="mb-4 d-flex justify-content-between align-items-center">
+        <a href="{% url 'khach_hang:lich_su_don_hang' %}" class="btn btn-outline-dark rounded-pill btn-sm">
+            <i class="fa-solid fa-arrow-left me-1"></i> Quay lại lịch sử hóa đơn
+        </a>
+        <button onclick="window.print()" class="btn btn-danger rounded-pill btn-sm px-3 shadow-sm">
+            <i class="fa-solid fa-print me-1"></i> In Hóa Đơn Này
+        </button>
+    </div>
+
+    <div class="card border-0 shadow rounded-4 p-4 p-md-5 bg-white" id="hoa-don-in">
+        <!-- Header hóa đơn -->
+        <div class="row align-items-center border-bottom pb-4 mb-4">
+            <div class="col-sm-6">
+                <h3 class="fw-bold text-dark mb-1"><i></i>FASHION STORE</h3>
+                <p class="small text-secondary mb-0">Hóa Đơn Bán Lẻ Quần Áo Thời Trang</p>
+                <p class="small text-secondary mb-0">Showroom: 123 Đường Thời Trang, Q.1, TP. Hồ Chí Minh</p>
+                <p class="small text-secondary mb-0">Hotline: 1900 6868 | Email: contact@fashionstore.vn</p>
+            </div>
+            <div class="col-sm-6 text-sm-end mt-3 mt-sm-0">
+                <span class="badge bg-danger fs-6 mb-2">HÓA ĐƠN #HD{{ don_hang.id }}</span>
+                <div class="small text-muted">Ngày lập: <strong>{{ don_hang.ngay_tao|date:"d/m/Y H:i" }}</strong></div>
+                <div class="small text-muted mt-1">Trạng thái: 
+                    {% if don_hang.trang_thai == 'cho_xac_nhan' %}
+                        <span class="badge bg-warning text-dark">Chờ xác nhận</span>
+                    {% elif don_hang.trang_thai == 'da_xac_nhan' %}
+                        <span class="badge bg-info text-dark">Đã xác nhận</span>
+                    {% elif don_hang.trang_thai == 'dang_giao' %}
+                        <span class="badge bg-primary">Đang giao hàng</span>
+                    {% elif don_hang.trang_thai == 'hoan_thanh' %}
+                        <span class="badge bg-success">Đã hoàn thành</span>
+                    {% else %}
+                        <span class="badge bg-secondary">Đã hủy đơn</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Thông tin khách hàng & Giao hàng -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <h6 class="fw-bold text-dark mb-2 border-bottom pb-1">Khách Hàng:</h6>
+                <p class="small mb-1"><strong>Họ và tên:</strong> {{ don_hang.ten_khach_hang }}</p>
+                <p class="small mb-1"><strong>Số điện thoại:</strong> {{ don_hang.so_dien_thoai }}</p>
+                {% if don_hang.email %}<p class="small mb-1"><strong>Email:</strong> {{ don_hang.email }}</p>{% endif %}
+            </div>
+            <div class="col-md-6 mt-3 mt-md-0">
+                <h6 class="fw-bold text-dark mb-2 border-bottom pb-1">Thông Tin Giao Hàng:</h6>
+                <p class="small mb-1"><strong>Địa chỉ nhận:</strong> {{ don_hang.dia_chi_giao_hang }}</p>
+                <p class="small mb-1"><strong>Phương thức thanh toán:</strong> COD (Thanh toán khi nhận hàng)</p>
+                {% if don_hang.ghi_chu %}<p class="small mb-1"><strong>Ghi chú đơn:</strong> {{ don_hang.ghi_chu }}</p>{% endif %}
+            </div>
+        </div>
+
+        <!-- Bảng sản phẩm -->
+        <div class="table-responsive mb-4">
+            <table class="table table-bordered align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th class="text-center" style="width: 50px;">STT</th>
+                        <th>Tên Sản Phẩm Thời Trang</th>
+                        <th class="text-center">Kích Cỡ (Size)</th>
+                        <th class="text-center">Màu Sắc</th>
+                        <th class="text-end">Đơn Giá</th>
+                        <th class="text-center">Số Lượng</th>
+                        <th class="text-end">Thành Tiền</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in don_hang.danh_sach_san_pham_dat.all %}
+                    <tr>
+                        <td class="text-center">{{ forloop.counter }}</td>
+                        <td>
+                            <span class="fw-bold text-dark">{{ item.ten_san_pham }}</span>
+                        </td>
+                        <td class="text-center"><span class="badge bg-light text-dark border">{{ item.kich_co }}</span></td>
+                        <td class="text-center">{{ item.mau_sac|default:"Tiêu chuẩn" }}</td>
+                        <td class="text-end">{{ item.don_gia|intcomma }}₫</td>
+                        <td class="text-center fw-bold">{{ item.so_luong }}</td>
+                        <td class="text-end fw-bold text-danger">{{ item.tinh_thanh_tien|intcomma }}₫</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="6" class="text-end fw-semibold">Tạm tính tiền hàng:</td>
+                        <td class="text-end fw-bold">{{ don_hang.tong_tien|intcomma }}₫</td>
+                    </tr>
+                    <tr>
+                        <td colspan="6" class="text-end fw-semibold">Phí vận chuyển giao hàng:</td>
+                        <td class="text-end fw-bold text-success">0₫ (Miễn phí)</td>
+                    </tr>
+                    <tr class="table-light">
+                        <td colspan="6" class="text-end fw-bold fs-5">TỔNG CỘNG THANH TOÁN:</td>
+                        <td class="text-end fw-bold fs-5 text-danger">{{ don_hang.tong_tien|intcomma }}₫</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <!-- Footer hóa đơn -->
+        <div class="border-top pt-3 text-center small text-secondary">
+            <p class="mb-1">Cảm ơn quý khách đã tin tưởng và lựa chọn sản phẩm của <strong>Fashion Store</strong>!</p>
+            <p class="mb-0">Mọi thắc mắc hoặc yêu cầu đổi size trong 7 ngày, quý khách vui lòng liên hệ hotline: <strong>1900 6868</strong>.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

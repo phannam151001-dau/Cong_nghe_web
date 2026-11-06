@@ -1,0 +1,230 @@
+{% extends "bo_cuc_chung.html" %}
+{% load humanize %}
+
+{% block title %}
+    {% if danh_muc_hien_tai %}{{ danh_muc_hien_tai.ten_danh_muc }} - Fashion Store{% else %}Cửa Hàng Quần Áo - Thời Trang Thiết Kế Hiện Đại{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* BANNER NỀN SHOWROOM SHOP THỜI TRANG TƯƠI SÁNG & HIỆN ĐẠI */
+    .hero-showroom-bright {
+        position: relative;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(255, 255, 255, 0.72) 50%, rgba(255, 255, 255, 0.88) 100%), 
+                    url('https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?w=1600&auto=format&fit=crop&q=80') center center / cover no-repeat;
+        padding: 85px 0;
+        border-bottom: 1px solid #e2e8f0;
+        color: #1f2937;
+    }
+    .hero-glass-card-bright {
+        background: rgba(255, 255, 255, 0.88);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.9);
+        box-shadow: 0 20px 45px rgba(0, 0, 0, 0.07);
+        border-radius: 20px;
+        padding: 30px;
+    }
+    .hero-badge-feature-bright {
+        background: #ffffff;
+        border: 1px solid #f1f5f9;
+        border-radius: 14px;
+        padding: 14px 18px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        transition: all 0.3s ease;
+    }
+    .hero-badge-feature-bright:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        border-color: #cbd5e1;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- BANNER CHÍNH NỀN SHOWROOM SHOP QUẦN ÁO SÁNG SỦA, TINH TẾ -->
+{% if not danh_muc_hien_tai and not tu_khoa %}
+<section class="hero-showroom-bright mb-5">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <!-- Cột nội dung giới thiệu -->
+            <div class="col-lg-7">
+                <div class="d-inline-flex align-items-center badge bg-danger text-uppercase px-3 py-2 mb-3 shadow-sm rounded-pill">
+                    <i class="fa-solid fa-gem me-2"></i> Showroom Thời Trang 2026
+                </div>
+                <h1 class="display-4 fw-extrabold text-dark mb-3" style="line-height: 1.25; font-weight: 800;">
+                    Không Gian Thời Trang Tươi Mới, Tối Giản & Thanh Lịch
+                </h1>
+                <p class="lead text-secondary mb-4" style="max-width: 620px; font-size: 1.15rem; line-height: 1.6;">
+                    Chào mừng bạn đến với Fashion Store – Nơi hội tụ các bộ sưu tập áo sơ mi, polo, quần âu, áo blazer thiết kế form dáng chuẩn Châu Á với chất liệu sợi tre và cotton thoáng mát suốt ngày dài.
+                </p>
+                <div class="d-flex flex-wrap gap-3">
+                    <a href="#khu-vuc-san-pham" class="btn btn-danger btn-lg rounded-pill px-4 py-3 fw-bold shadow">
+                        <i class="fa-solid fa-bag-shopping me-2"></i> Khám Phá Sản Phẩm Ngay
+                    </a>
+                    <a href="{% url 'cua_hang:gioi_thieu' %}" class="btn btn-outline-dark btn-lg rounded-pill px-4 py-3 fw-bold">
+                        <i class="fa-solid fa-store me-2"></i> Về Showroom
+                    </a>
+                </div>
+            </div>
+
+            <!-- Cột Card dịch vụ phong cách trắng sáng sang trọng -->
+            <div class="col-lg-5">
+                <div class="hero-glass-card-bright">
+                    <h5 class="fw-bold mb-3 d-flex align-items-center text-dark">
+                        <i class="fa-solid fa-sparkles text-danger me-2"></i> Trải Nghiệm Mua Sắm Chuẩn 5 Sao
+                    </h5>
+                    <p class="small text-secondary mb-4">
+                        Tất cả trang phục đều được tuyển chọn kỹ lưỡng từ chất liệu vải đến từng đường kim mũi chỉ.
+                    </p>
+
+                    <div class="d-flex flex-column gap-3">
+                        <div class="hero-badge-feature-bright d-flex align-items-center">
+                            <div class="rounded-circle bg-danger-subtle text-danger p-2 me-3 d-inline-flex align-items-center justify-content-center" style="width: 44px; height: 44px;">
+                                <i class="fa-solid fa-shirt fs-5"></i>
+                            </div>
+                            <div>
+                                <div class="fw-bold text-dark">Chất Liệu Cao Cấp</div>
+                                <div class="text-secondary small">Cotton Compact 100%, sợi tre Bamboo mềm mát</div>
+                            </div>
+                        </div>
+
+                        <div class="hero-badge-feature-bright d-flex align-items-center">
+                            <div class="rounded-circle bg-success-subtle text-success p-2 me-3 d-inline-flex align-items-center justify-content-center" style="width: 44px; height: 44px;">
+                                <i class="fa-solid fa-truck-fast fs-5"></i>
+                            </div>
+                            <div>
+                                <div class="fw-bold text-dark">Giao Hàng Siêu Tốc</div>
+                                <div class="text-secondary small">Được kiểm tra và thử đồ trước khi thanh toán</div>
+                            </div>
+                        </div>
+
+                        <div class="hero-badge-feature-bright d-flex align-items-center">
+                            <div class="rounded-circle bg-primary-subtle text-primary p-2 me-3 d-inline-flex align-items-center justify-content-center" style="width: 44px; height: 44px;">
+                                <i class="fa-solid fa-rotate-left fs-5"></i>
+                            </div>
+                            <div>
+                                <div class="fw-bold text-dark">Đổi Size Miễn Phí</div>
+                                <div class="text-secondary small">Hỗ trợ đổi size tận nhà trong vòng 7 ngày</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- KHU VỰC DANH SÁCH SẢN PHẨM -->
+<div class="container py-4" id="khu-vuc-san-pham">
+    <!-- Tiêu đề & Bộ lọc sắp xếp -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+        <div>
+            <h2 class="h4 fw-bold mb-1">
+                {% if danh_muc_hien_tai %}
+                    {{ danh_muc_hien_tai.ten_danh_muc }}
+                {% elif tu_khoa %}
+                    Kết quả tìm kiếm cho: "<span class="text-danger">{{ tu_khoa }}</span>"
+                {% else %}
+                    Tất Cả Sản Phẩm
+                {% endif %}
+            </h2>
+            <p class="text-muted small mb-0">Hiển thị {{ san_phams.count }} sản phẩm</p>
+        </div>
+
+        <!-- Dropdown sắp xếp -->
+        <div class="d-flex align-items-center gap-2">
+            <label class="small text-muted text-nowrap">Sắp xếp theo:</label>
+            <form method="GET" class="d-inline">
+                {% if tu_khoa %}<input type="hidden" name="q" value="{{ tu_khoa }}">{% endif %}
+                <select name="sort" class="form-select form-select-sm" onchange="this.form.submit()">
+                    <option value="" {% if not sap_xep %}selected{% endif %}>Mặc định</option>
+                    <option value="moi_nhat" {% if sap_xep == 'moi_nhat' %}selected{% endif %}>Mới nhất</option>
+                    <option value="gia_tang" {% if sap_xep == 'gia_tang' %}selected{% endif %}>Giá: Thấp đến cao</option>
+                    <option value="gia_giam" {% if sap_xep == 'gia_giam' %}selected{% endif %}>Giá: Cao đến thấp</option>
+                </select>
+            </form>
+        </div>
+    </div>
+
+    <!-- Thanh chuyển nhanh các danh mục -->
+    <div class="d-flex flex-wrap gap-2 mb-4">
+        <a href="{% url 'cua_hang:trang_chu' %}" class="btn btn-sm {% if not danh_muc_hien_tai %}btn-dark{% else %}btn-outline-secondary{% endif %} rounded-pill px-3">
+            Tất cả
+        </a>
+        {% for dm in cac_danh_muc %}
+            <a href="{{ dm.get_absolute_url }}" class="btn btn-sm {% if danh_muc_hien_tai.slug == dm.slug %}btn-dark{% else %}btn-outline-secondary{% endif %} rounded-pill px-3">
+                {{ dm.ten_danh_muc }}
+            </a>
+        {% endfor %}
+    </div>
+
+    <!-- Lưới sản phẩm (Product Grid) -->
+    <div class="row g-4">
+        {% for sp in san_phams %}
+        <div class="col-6 col-md-4 col-lg-3">
+            <div class="product-card h-100 d-flex flex-column">
+                <div class="product-img-wrap">
+                    {% if sp.phan_tram_giam_gia > 0 %}
+                    <span class="discount-tag">-{{ sp.phan_tram_giam_gia }}%</span>
+                    {% endif %}
+                    
+                    <a href="{{ sp.get_absolute_url }}">
+                        {% if sp.hinh_anh %}
+                            <img src="{{ sp.hinh_anh.url }}" alt="{{ sp.ten_san_pham }}" class="product-img">
+                        {% else %}
+                            <img src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=500&auto=format&fit=crop&q=80" alt="{{ sp.ten_san_pham }}" class="product-img">
+                        {% endif %}
+                    </a>
+                </div>
+
+                <div class="p-3 d-flex flex-column flex-grow-1">
+                    <span class="small text-muted text-uppercase fw-semibold mb-1" style="font-size: 0.75rem;">
+                        {{ sp.danh_muc.ten_danh_muc }}
+                    </span>
+                    <h3 class="h6 fw-bold mb-2 text-truncate" title="{{ sp.ten_san_pham }}">
+                        <a href="{{ sp.get_absolute_url }}" class="text-dark text-decoration-none">
+                            {{ sp.ten_san_pham }}
+                        </a>
+                    </h3>
+
+                    <div class="mt-auto">
+                        <div class="d-flex align-items-baseline mb-2">
+                            <span class="price-current">{{ sp.gia_ban|intcomma }}₫</span>
+                            {% if sp.gia_goc %}
+                            <span class="price-old">{{ sp.gia_goc|intcomma }}₫</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <a href="{{ sp.get_absolute_url }}" class="btn btn-sm btn-outline-dark flex-grow-1 rounded-pill">
+                                Chi tiết
+                            </a>
+                            <form action="{% url 'gio_hang:them_vao_gio' sp.id %}" method="POST" class="d-inline">
+                                {% csrf_token %}
+                                <input type="hidden" name="so_luong" value="1">
+                                <input type="hidden" name="kich_co" value="{{ sp.danh_sach_kich_co.0 }}">
+                                <input type="hidden" name="mau_sac" value="{{ sp.danh_sach_mau_sac.0 }}">
+                                <button type="submit" class="btn btn-sm btn-dark rounded-circle" title="Thêm vào giỏ hàng">
+                                    <i class="fa-solid fa-cart-plus"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <div class="py-5">
+                <i class="fa-solid fa-shirt fa-4x text-muted mb-3"></i>
+                <h4 class="text-secondary">Chưa có sản phẩm nào phù hợp!</h4>
+                <p class="text-muted">Vui lòng thử tìm kiếm bằng từ khóa khác hoặc quay lại xem tất cả sản phẩm.</p>
+                <a href="{% url 'cua_hang:trang_chu' %}" class="btn btn-dark rounded-pill px-4 mt-2">Xem tất cả sản phẩm</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,91 @@
+{% extends "bo_cuc_chung.html" %}
+
+{% block title %}Đăng Ký Tài Khoản Khách Hàng - Fashion Store{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-6">
+            <div class="card border-0 shadow rounded-4 p-4 p-md-5">
+                <div class="text-center mb-4">
+                    <div class="rounded-circle bg-danger-subtle text-danger d-inline-flex p-3 mb-2">
+                        <i class="fa-solid fa-user-plus fa-2x"></i>
+                    </div>
+                    <h2 class="fw-bold text-dark">Đăng Ký Tài Khoản</h2>
+                    <p class="text-secondary small">Tạo tài khoản để theo dõi lịch sử hóa đơn, đơn hàng và nhận ưu đãi riêng.</p>
+                </div>
+
+                <form method="POST" action="{% url 'khach_hang:dang_ky' %}">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Tên đăng nhập <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light"><i class="fa-solid fa-user text-muted"></i></span>
+                            <input type="text" name="ten_dang_nhap" class="form-control" required placeholder="Ví dụ: namnguyen99" value="{{ du_lieu.ten_dang_nhap|default:'' }}">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Họ và tên của bạn</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light"><i class="fa-solid fa-id-card text-muted"></i></span>
+                            <input type="text" name="ho_ten" class="form-control" placeholder="Ví dụ: Nguyễn Văn Nam" value="{{ du_lieu.ho_ten|default:'' }}">
+                        </div>
+                    </div>
+
+                    <div class="row g-2 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Số điện thoại</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="fa-solid fa-phone text-muted"></i></span>
+                                <input type="tel" name="so_dien_thoai" class="form-control" placeholder="0912 345 678" value="{{ du_lieu.so_dien_thoai|default:'' }}">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Địa chỉ Email</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="fa-solid fa-envelope text-muted"></i></span>
+                                <input type="email" name="email" class="form-control" placeholder="example@gmail.com" value="{{ du_lieu.email|default:'' }}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Địa chỉ nhận hàng mặc định</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light"><i class="fa-solid fa-location-dot text-muted"></i></span>
+                            <input type="text" name="dia_chi" class="form-control" placeholder="Số nhà, đường, phường, quận, thành phố..." value="{{ du_lieu.dia_chi|default:'' }}">
+                        </div>
+                    </div>
+
+                    <div class="row g-2 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Mật khẩu <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="fa-solid fa-lock text-muted"></i></span>
+                                <input type="password" name="mat_khau" class="form-control" required placeholder="Tối thiểu 6 ký tự">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Xác nhận mật khẩu <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="fa-solid fa-shield-halved text-muted"></i></span>
+                                <input type="password" name="xac_nhan_mat_khau" class="form-control" required placeholder="Nhập lại mật khẩu">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-danger btn-lg w-100 rounded-pill fw-bold py-3 shadow-sm mb-3">
+                        <i class="fa-solid fa-arrow-right-to-bracket me-2"></i> Đăng Ký Tài Khoản
+                    </button>
+
+                    <div class="text-center small text-secondary">
+                        Đã có tài khoản? <a href="{% url 'khach_hang:dang_nhap' %}" class="text-danger fw-bold text-decoration-none">Đăng nhập ngay</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

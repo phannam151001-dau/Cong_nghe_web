@@ -1,0 +1,121 @@
+{% extends "bo_cuc_chung.html" %}
+{% load humanize %}
+
+{% block title %}Thanh Toán & Đặt Hàng - Fashion Store{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="mb-4">
+        <h1 class="h3 fw-bold">Thông Tin Đặt Hàng</h1>
+        <p class="text-secondary small">Vui lòng điền thông tin để chúng tôi liên hệ và giao hàng đến bạn sớm nhất.</p>
+    </div>
+
+    <form method="POST" action="{% url 'gio_hang:thanh_toan' %}">
+        {% csrf_token %}
+        <div class="row g-5">
+            <!-- Cột điền thông tin nhận hàng -->
+            <div class="col-lg-7">
+                <div class="card border-0 shadow-sm rounded-4 p-4">
+                    <h5 class="fw-bold mb-4 border-bottom pb-2">
+                        <i class="fa-solid fa-location-dot text-danger me-2"></i>Địa Chỉ Nhận Hàng
+                    </h5>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Họ và tên người nhận <span class="text-danger">*</span></label>
+                            <input type="text" name="ten_khach_hang" class="form-control" required placeholder="Ví dụ: Nguyễn Văn A" value="{{ thong_tin.ten_khach_hang|default:'' }}">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Số điện thoại liên hệ <span class="text-danger">*</span></label>
+                            <input type="tel" name="so_dien_thoai" class="form-control" required placeholder="Ví dụ: 0912 345 678" value="{{ thong_tin.so_dien_thoai|default:'' }}">
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label small fw-bold">Email nhận mã vận đơn (tùy chọn)</label>
+                            <input type="email" name="email" class="form-control" placeholder="example@gmail.com" value="{{ thong_tin.email|default:'' }}">
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label small fw-bold">Địa chỉ chi tiết nhận hàng <span class="text-danger">*</span></label>
+                            <textarea name="dia_chi_giao_hang" class="form-control" rows="2" required placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành phố...">{{ thong_tin.dia_chi_giao_hang|default:'' }}</textarea>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label small fw-bold">Ghi chú cho shipper (tùy chọn)</label>
+                            <textarea name="ghi_chu" class="form-control" rows="2" placeholder="Ví dụ: Giao giờ hành chính, gọi trước khi giao 15 phút..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Phương thức thanh toán -->
+                    <h5 class="fw-bold mt-4 mb-3 border-bottom pb-2">
+                        <i class="fa-solid fa-credit-card text-danger me-2"></i>Phương Thức Thanh Toán
+                    </h5>
+
+                    <div class="form-check p-3 border rounded-3 mb-2 bg-light">
+                        <input class="form-check-input ms-0 me-2" type="radio" name="phuong_thuc" id="payment_cod" value="cod" checked>
+                        <label class="form-check-label fw-bold" for="payment_cod">
+                            <i class="fa-solid fa-money-bill-wave text-success me-2"></i>Thanh toán khi nhận hàng (COD)
+                        </label>
+                        <p class="small text-muted mb-0 ps-4">Quý khách được kiểm tra sản phẩm trước khi thanh toán tiền mặt cho nhân viên giao hàng.</p>
+                    </div>
+
+                    <div class="form-check p-3 border rounded-3 text-muted">
+                        <input class="form-check-input ms-0 me-2" type="radio" name="phuong_thuc" id="payment_bank" value="bank" disabled>
+                        <label class="form-check-label fw-semibold" for="payment_bank">
+                            <i class="fa-solid fa-building-columns text-primary me-2"></i>Chuyển khoản ngân hàng (Sắp ra mắt)
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cột tóm tắt đơn hàng -->
+            <div class="col-lg-5">
+                <div class="card border-0 shadow-sm rounded-4 p-4 sticky-top" style="top: 90px;">
+                    <h5 class="fw-bold mb-3 border-bottom pb-2">Đơn Hàng ({{ gio_hang|length }} món)</h5>
+
+                    <div class="cart-items-summary mb-3" style="max-height: 280px; overflow-y: auto;">
+                        {% for item in gio_hang %}
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="d-flex align-items-center">
+                                <span class="badge bg-secondary me-2">{{ item.so_luong }}x</span>
+                                <div>
+                                    <div class="small fw-bold text-dark text-truncate" style="max-width: 180px;">{{ item.san_pham.ten_san_pham }}</div>
+                                    <div class="small text-muted">Size: {{ item.kich_co }}{% if item.mau_sac %}, Màu: {{ item.mau_sac }}{% endif %}</div>
+                                </div>
+                            </div>
+                            <span class="small fw-bold">{{ item.thanh_tien|intcomma }}₫</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <hr>
+
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-secondary small">Tạm tính:</span>
+                        <span class="fw-semibold">{{ gio_hang.tong_tien|intcomma }}₫</span>
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="text-secondary small">Phí vận chuyển:</span>
+                        <span class="text-success fw-bold small">0₫ (Miễn phí)</span>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-baseline mb-4 pt-2 border-top">
+                        <span class="fw-bold fs-5">Tổng số tiền:</span>
+                        <span class="fs-4 fw-bold text-danger">{{ gio_hang.tong_tien|intcomma }}₫</span>
+                    </div>
+
+                    <button type="submit" class="btn btn-danger btn-lg w-100 rounded-pill fw-bold py-3 shadow">
+                        <i class="fa-solid fa-check-circle me-2"></i> Xác Nhận Đặt Hàng
+                    </button>
+
+                    <a href="{% url 'gio_hang:xem_gio_hang' %}" class="btn btn-link text-secondary text-decoration-none w-100 text-center mt-2 small">
+                        Quay lại sửa giỏ hàng
+                    </a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
