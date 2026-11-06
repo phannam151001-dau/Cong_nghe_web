@@ -5,7 +5,7 @@ Hệ thống cấu hình dự án Web Bán Quần Áo (Fashion Store)
 
 from pathlib import Path
 import os
-
+import dj_database_url
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get(
@@ -74,20 +74,31 @@ WSGI_APPLICATION = 'fashion_store.wsgi.application'
 # bạn chỉ cần mở đoạn cấu hình MySQL bên dưới và comment lại SQLite:
 
 # 3. Cấu hình Cơ sở dữ liệu MySQL XAMPP
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'web_ban_ao_quan',
-        'USER': 'root',
-        'PASSWORD': '0828937914n',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-            'charset': 'utf8mb4',
+if os.environ.get('DATABASE_URL'):
+    # Khi chạy trên Render: sử dụng PostgreSQL
+    DATABASES = {
+        'default': dj_database_url.parse(
+            os.environ.get('DATABASE_URL'),
+            conn_max_age=600,
+            ssl_require=True
+        )
+    }
+else:
+    # Khi chạy trên máy tính: sử dụng MySQL XAMPP
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'web_ban_ao_quan',
+            'USER': 'root',
+            'PASSWORD': '0828937914n',
+            'HOST': '127.0.0.1',
+            'PORT': '3306',
+            'OPTIONS': {
+                'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+                'charset': 'utf8mb4',
+            },
         }
     }
-}
 #     }
 # }
 
