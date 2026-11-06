@@ -19,8 +19,9 @@ class HoSoKhachHang(models.Model):
         return f"Hồ sơ của {self.user.username}"
 
 
+
 @receiver(post_save, sender=User)
-def tao_ho_so_khach_hang(sender, instance, created, **kwargs):
-    """Tự động tạo hồ sơ khách hàng khi tài khoản User mới được tạo"""
-    if created:
-        HoSoKhachHang.objects.create(user=instance)
+def tao_ho_so_khach_hang(sender, instance, created, raw=False, **kwargs):
+    """Tự động tạo hồ sơ khi tài khoản mới được tạo"""
+    if created and not raw:
+        HoSoKhachHang.objects.get_or_create(user=instance)
