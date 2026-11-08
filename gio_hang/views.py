@@ -1,6 +1,7 @@
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.utils.http import url_has_allowed_host_and_scheme
 from cua_hang.models import SanPham
 from .xu_ly_gio_hang import GioHang
@@ -65,6 +66,7 @@ def xoa_khoi_gio(request, khoa):
     return redirect('gio_hang:xem_gio_hang')
 
 
+@login_required(login_url='khach_hang:dang_nhap')
 def thanh_toan(request):
     """Trang nhập thông tin giao hàng và xác nhận đặt hàng"""
     gio = GioHang(request)

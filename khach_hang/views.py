@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.utils.http import url_has_allowed_host_and_scheme
 from gio_hang.models import DonHang
 from .models import HoSoKhachHang
 
@@ -81,7 +82,13 @@ def dang_nhap(request):
         if user is not None:
             login(request, user)
             messages.success(request, f'Chào mừng trở lại, {user.first_name or user.username}!')
-            next_url = request.POST.get('next') or 'cua_hang:trang_chu'
+            next_url = request.POST.get('next', '')
+            if not url_has_allowed_host_and_scheme(
+                url=next_url,
+                allowed_hosts={request.get_host()},
+                require_https=request.is_secure(),
+            ):
+                next_url = 'cua_hang:trang_chu'
             return redirect(next_url)
         else:
             messages.error(request, 'Tên đăng nhập hoặc mật khẩu không chính xác!')

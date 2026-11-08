@@ -15,7 +15,9 @@
                         <i class="fa-solid fa-right-to-bracket fa-2x"></i>
                     </div>
                     <h2 class="fw-bold text-dark">Đăng Nhập</h2>
-                    <p class="text-secondary small">Đăng nhập tài khoản để quản lý đơn hàng và hóa đơn của bạn.</p>
+                    <p class="text-secondary small">
+                        {% if next %}Vui lòng đăng nhập để tiếp tục đặt hàng.{% else %}Đăng nhập tài khoản để quản lý đơn hàng và hóa đơn của bạn.{% endif %}
+                    </p>
                 </div>
 
                 <form method="POST" action="{% url 'khach_hang:dang_nhap' %}">

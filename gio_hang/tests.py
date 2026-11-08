@@ -1,7 +1,9 @@
 from django.contrib.messages import get_messages
+from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
 from cua_hang.models import DanhMuc, SanPham
+from .models import DonHang
 
 
 class ThemVaoGioTests(TestCase):
@@ -91,5 +93,74 @@ class ThemVaoGioTests(TestCase):
         self.assertRedirects(
             response,
             self.san_pham.get_absolute_url(),
+            fetch_redirect_response=False,
+        )
+
+    def test_khach_chua_dang_nhap_duoc_chuyen_den_dang_nhap_de_checkout(self):
+        self.client.post(
+            reverse('gio_hang:them_vao_gio', args=[self.san_pham.id]),
+            {'so_luong': '1', 'kich_co': 'M', 'mau_sac': 'Đen'},
+        )
+
+        response = self.client.get(reverse('gio_hang:thanh_toan'))
+
+        self.assertRedirects(
+            response,
+            f"{reverse('khach_hang:dang_nhap')}?next={reverse('gio_hang:thanh_toan')}",
+            fetch_redirect_response=False,
+        )
+        self.assertEqual(len(self.client.session['gio_hang']), 1)
+
+    def test_khach_chua_dang_nhap_khong_the_tao_don_hang(self):
+        self.client.post(
+            reverse('gio_hang:them_vao_gio', args=[self.san_pham.id]),
+            {'so_luong': '1', 'kich_co': 'M', 'mau_sac': 'Đen'},
+        )
+
+        response = self.client.post(
+            reverse('gio_hang:thanh_toan'),
+            {
+                'ten_khach_hang': 'Khách chưa đăng nhập',
+                'so_dien_thoai': '0900000000',
+                'dia_chi_giao_hang': 'Địa chỉ kiểm thử',
+            },
+        )
+
+        self.assertEqual(DonHang.objects.count(), 0)
+        self.assertEqual(response.status_code, 302)
+
+    def test_dang_nhap_quay_lai_checkout(self):
+        user = User.objects.create_user(username='khach', password='matkhau123')
+
+        response = self.client.post(
+            f"{reverse('khach_hang:dang_nhap')}?next={reverse('gio_hang:thanh_toan')}",
+            {
+                'ten_dang_nhap': user.username,
+                'mat_khau': 'matkhau123',
+                'next': reverse('gio_hang:thanh_toan'),
+            },
+        )
+
+        self.assertRedirects(
+            response,
+            reverse('gio_hang:thanh_toan'),
+            fetch_redirect_response=False,
+        )
+
+    def test_dang_nhap_tu_choi_next_ben_ngoai(self):
+        user = User.objects.create_user(username='khach', password='matkhau123')
+
+        response = self.client.post(
+            reverse('khach_hang:dang_nhap'),
+            {
+                'ten_dang_nhap': user.username,
+                'mat_khau': 'matkhau123',
+                'next': 'https://example.com/',
+            },
+        )
+
+        self.assertRedirects(
+            response,
+            reverse('cua_hang:trang_chu'),
             fetch_redirect_response=False,
         )
