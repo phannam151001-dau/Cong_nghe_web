@@ -30,9 +30,57 @@
             min-height: 100vh;
         }
         .navbar-brand {
+            gap: 7px;
             font-weight: 800;
-            letter-spacing: 1px;
-            font-size: 1.5rem;
+            letter-spacing: 0.07em;
+            font-size: 1.35rem;
+            line-height: 1;
+        }
+        .brand-name {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            font-weight: 800;
+            letter-spacing: 0.07em;
+            font-size: 1.35rem;
+            line-height: 1;
+        }
+        .brand-fashion {
+            color: #111827;
+        }
+        .brand-name-footer .brand-fashion {
+            color: #fff;
+        }
+        .brand-store {
+            position: relative;
+            color: #e11d48;
+        }
+        .brand-store::after {
+            position: absolute;
+            right: 0;
+            bottom: -6px;
+            left: 0;
+            height: 2px;
+            border-radius: 2px;
+            background: #e11d48;
+            content: "";
+        }
+        .auth-background {
+            position: relative;
+            isolation: isolate;
+            min-height: calc(100vh - 76px);
+            padding: 3rem 0;
+            background: url('https://images.unsplash.com/photo-1445205170230-053b83016050?w=1800&auto=format&fit=crop&q=85') center / cover no-repeat;
+        }
+        .auth-background::before {
+            position: absolute;
+            z-index: -1;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.48);
+            content: "";
+        }
+        .auth-card {
+            background: rgba(255, 255, 255, 0.97);
         }
         .badge-cart {
             font-size: 0.75rem;
@@ -40,16 +88,18 @@
             top: -5px;
             right: -10px;
         }
+        .cart-toast-container {
+            z-index: 1090;
+        }
         .product-card {
             border: 1px solid #f1f5f9;
             border-radius: 12px;
-            transition: all 0.3s ease;
+            transition: box-shadow 0.25s ease, border-color 0.25s ease;
             background: #fff;
             overflow: hidden;
         }
         .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 24px rgba(0,0,0,0.08);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.07);
             border-color: #e2e8f0;
         }
         .product-img-wrap {
@@ -68,10 +118,22 @@
             transform: scale(1.05);
         }
         .discount-tag {
+            background: #e11d48;
+            color: #fff;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+        .product-badges {
             position: absolute;
             top: 10px;
             left: 10px;
-            background: #e11d48;
+            display: flex;
+            gap: 6px;
+        }
+        .stock-tag {
+            background: #198754;
             color: #fff;
             font-size: 0.75rem;
             font-weight: 700;
@@ -118,9 +180,9 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm py-2 py-lg-3">
         <div class="container">
             <!-- LOGO THƯƠNG HIỆU -->
-            <a class="navbar-brand text-dark d-flex align-items-center text-nowrap me-3 me-xl-4" href="{% url 'cua_hang:trang_chu' %}">
-                <i></i>
-                <span>FASHION<span class="text-danger">STORE</span></span>
+            <a class="navbar-brand brand-name d-flex align-items-center text-nowrap me-3 me-xl-4" href="{% url 'cua_hang:trang_chu' %}">
+                <span class="brand-fashion">FASHION</span>
+                <span class="brand-store">STORE</span>
             </a>
 
             <!-- NÚT MOBILE MENU -->
@@ -150,7 +212,7 @@
                             Danh mục
                         </a>
                         <ul class="dropdown-menu shadow-sm border-0">
-                            <li><a class="dropdown-item" href="{% url 'cua_hang:trang_chu' %}">Tất cả sản phẩm</a></li>
+                            <li><a class="dropdown-item" href="{% url 'cua_hang:trang_chu' %}#khu-vuc-san-pham">Tất cả sản phẩm</a></li>
                             <li><hr class="dropdown-divider"></li>
                             {% for dm in cac_danh_muc %}
                                 <li><a class="dropdown-item" href="{{ dm.get_absolute_url }}">{{ dm.ten_danh_muc }}</a></li>
@@ -219,63 +281,58 @@
         {% block content %}{% endblock %}
     </main>
 
-    <!-- CHÂN TRANG (FOOTER) -->
-    <footer class="py-5">
-        <div class="container">
-            <div class="row g-4">
-                <div class="col-lg-4 col-md-6">
-                    <h5 class="text-white fw-bold mb-3"><i class="fa-solid fa-shirt text-danger me-2"></i>FASHION STORE</h5>
-                    <p class="small text-secondary">
-                        Cửa hàng thời trang cao cấp với phong cách hiện đại, thanh lịch và đón đầu xu hướng. Mang lại trải nghiệm mua sắm tiện ích và trang phục hoàn hảo nhất cho người mặc.
-                    </p>
-                    <div class="d-flex gap-3 text-secondary mt-3">
-                        <a href="#" class="text-secondary fs-5"><i class="fa-brands fa-facebook"></i></a>
-                        <a href="#" class="text-secondary fs-5"><i class="fa-brands fa-instagram"></i></a>
-                        <a href="#" class="text-secondary fs-5"><i class="fa-brands fa-tiktok"></i></a>
-                        <a href="#" class="text-secondary fs-5"><i class="fa-brands fa-youtube"></i></a>
-                    </div>
-                </div>
-
-                <div class="col-lg-2 col-md-6">
-                    <h6 class="text-white fw-bold mb-3">Danh Mục</h6>
-                    <ul class="list-unstyled small">
-                        {% for dm in cac_danh_muc|slice:":5" %}
-                        <li class="mb-2"><a href="{{ dm.get_absolute_url }}" class="text-secondary text-decoration-none">{{ dm.ten_danh_muc }}</a></li>
-                        {% empty %}
-                        <li class="mb-2"><a href="{% url 'cua_hang:trang_chu' %}" class="text-secondary text-decoration-none">Tất cả sản phẩm</a></li>
-                        {% endfor %}
-                    </ul>
-                </div>
-
-                <div class="col-lg-3 col-md-6">
-                    <h6 class="text-white fw-bold mb-3">Chính Sách & Hỗ Trợ</h6>
-                    <ul class="list-unstyled small">
-                        <li class="mb-2"><a href="#" class="text-secondary text-decoration-none">Chính sách đổi trả trong 7 ngày</a></li>
-                        <li class="mb-2"><a href="#" class="text-secondary text-decoration-none">Chính sách bảo hành form dáng</a></li>
-                        <li class="mb-2"><a href="#" class="text-secondary text-decoration-none">Bảng hướng dẫn chọn size chuẩn</a></li>
-                        <li class="mb-2"><a href="#" class="text-secondary text-decoration-none">Phương thức thanh toán COD</a></li>
-                    </ul>
-                </div>
-
-                <div class="col-lg-3 col-md-6">
-                    <h6 class="text-white fw-bold mb-3">Thông Tin Liên Hệ</h6>
-                    <p class="small text-secondary mb-1"><i class="fa-solid fa-location-dot me-2 text-danger"></i> 123 Đường Thời Trang, Q.1, TP. Hồ Chí Minh</p>
-                    <p class="small text-secondary mb-1"><i class="fa-solid fa-phone me-2 text-danger"></i> Hotline: 1900 6868</p>
-                    <p class="small text-secondary mb-1"><i class="fa-solid fa-envelope me-2 text-danger"></i> Email: contact@fashionstore.vn</p>
-                    <p class="small text-secondary"><i class="fa-solid fa-clock me-2 text-danger"></i> Giờ làm việc: 08:30 - 22:00 hàng ngày</p>
-                </div>
-            </div>
-
-            <hr class="border-secondary my-4">
-            <div class="d-flex flex-wrap justify-content-between align-items-center small text-secondary">
-                <div>© 2026 Fashion Store. Xây dựng theo lộ trình Django HowKteam.</div>
-                <div>Lập trình với Python & Django Framework.</div>
-            </div>
-        </div>
-    </footer>
+    {% block footer %}{% endblock %}
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <div class="toast-container position-fixed bottom-0 end-0 p-3 cart-toast-container" aria-live="polite" aria-atomic="true">
+        <div id="cart-toast" class="toast align-items-center text-bg-success border-0" role="status">
+            <div class="d-flex">
+                <div class="toast-body"></div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Đóng"></button>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('submit', async function (event) {
+            const form = event.target.closest('.js-add-to-cart');
+            if (!form) return;
+
+            event.preventDefault();
+            const button = form.querySelector('button[type="submit"]');
+            const toastElement = document.getElementById('cart-toast');
+            const toast = bootstrap.Toast.getOrCreateInstance(toastElement);
+            button.disabled = true;
+
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: new FormData(form),
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    },
+                    credentials: 'same-origin'
+                });
+                if (!response.ok) throw new Error('Không thể thêm sản phẩm vào giỏ hàng.');
+
+                const result = await response.json();
+                document.querySelectorAll('.badge-cart').forEach(function (badge) {
+                    badge.textContent = result.cart_count;
+                });
+                toastElement.classList.remove('text-bg-danger');
+                toastElement.classList.add('text-bg-success');
+                toastElement.querySelector('.toast-body').textContent = result.message;
+            } catch (error) {
+                toastElement.classList.remove('text-bg-success');
+                toastElement.classList.add('text-bg-danger');
+                toastElement.querySelector('.toast-body').textContent = error.message;
+            } finally {
+                button.disabled = false;
+                toast.show();
+            }
+        });
+    </script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>

@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q
+from django.core.paginator import Paginator
 from .models import DanhMuc, SanPham
 
 
@@ -28,11 +29,15 @@ def danh_sach_san_pham(request, slug_danh_muc=None):
     elif sap_xep == 'moi_nhat':
         san_phams = san_phams.order_by('-ngay_tao')
 
+    phan_trang = Paginator(san_phams, 8)
+    trang_hien_tai = phan_trang.get_page(request.GET.get('page'))
+
     san_pham_noi_bat = SanPham.objects.filter(dang_kinh_doanh=True, noi_bat=True)[:4]
 
     du_lieu = {
         'danh_muc_hien_tai': danh_muc_hien_tai,
-        'san_phams': san_phams,
+        'san_phams': trang_hien_tai.object_list,
+        'trang_hien_tai': trang_hien_tai,
         'tu_khoa': tu_khoa,
         'sap_xep': sap_xep,
         'san_pham_noi_bat': san_pham_noi_bat,

@@ -2,44 +2,78 @@
 
 {% block title %}Giới Thiệu Thương Hiệu - Fashion Store{% endblock %}
 
+{% block footer %}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .about-page {
+        padding-top: 1.5rem;
+        padding-bottom: 1.5rem;
+    }
+    .about-copy {
+        font-size: 1.05rem;
+        line-height: 1.65;
+    }
+    .about-image {
+        width: 100%;
+        height: clamp(230px, 34vw, 340px);
+        object-fit: cover;
+        object-position: center;
+    }
+    .about-value-card {
+        padding: 1.25rem !important;
+    }
+    .about-value-card h2 {
+        font-size: 1.05rem;
+        line-height: 1.4;
+    }
+    .about-value-card p {
+        font-size: 1rem;
+        line-height: 1.55;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="container py-5">
-    <div class="row align-items-center mb-5">
+<div class="container about-page">
+    <div class="row align-items-center g-4 mb-3">
         <div class="col-lg-6">
-            <span class="badge bg-danger px-3 py-2 text-uppercase mb-3">Câu chuyện thương hiệu</span>
-            <h1 class="display-5 fw-bold mb-3">Định Hình Phong Cách Thời Trang Cho Bạn</h1>
-            <p class="text-secondary lead">
-                Fashion Store được thành lập với mục tiêu mang đến những trang phục ứng dụng cao, thanh lịch và hợp xu hướng cho người Việt.
+            <span class="badge bg-danger px-3 py-2 text-uppercase mb-3">Về Fashion Store</span>
+            <p class="text-secondary about-copy mb-3">
+                Chúng tôi tin rằng một bộ trang phục phù hợp có thể giúp bạn cảm thấy thoải mái và tự tin hơn trong mọi khoảnh khắc.
             </p>
-            <p class="text-secondary">
-                Từng sản phẩm từ áo thun polo, áo sơ mi công sở đến các mẫu quần jean, quần âu đều được kiểm định chất liệu vải khắt khe, đường may tỉ mỉ nhằm đem lại cảm giác thoải mái nhất suốt cả ngày dài.
+            <p class="text-secondary about-copy mb-3">
+                Fashion Store mang đến những lựa chọn thời trang dễ mặc, dễ phối cho nhịp sống hằng ngày: từ áo sơ mi, áo thun, quần jeans đến váy và áo khoác. Dù bạn đi làm, dạo phố hay gặp gỡ bạn bè, hãy chọn phong cách khiến bạn là chính mình.
             </p>
+            <a href="{% url 'cua_hang:trang_chu' %}#khu-vuc-san-pham" class="btn btn-danger rounded-pill px-4 py-2 fw-semibold">
+                Khám phá bộ sưu tập <i class="fa-solid fa-arrow-right ms-2"></i>
+            </a>
         </div>
         <div class="col-lg-6">
-            <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=700&auto=format&fit=crop&q=80" alt="About us" class="img-fluid rounded-4 shadow">
+            <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=700&auto=format&fit=crop&q=80" alt="Không gian trưng bày thời trang tại cửa hàng" class="about-image rounded-4 shadow">
         </div>
     </div>
 
-    <div class="row g-4 text-center mt-4">
+    <div class="row g-3 text-center">
         <div class="col-md-4">
-            <div class="p-4 border rounded-4 bg-light h-100">
-                <i class="fa-solid fa-gem fa-2x text-danger mb-3"></i>
-                <h5 class="fw-bold">Chất Lượng Hàng Đầu</h5>
-                <p class="text-secondary small mb-0">Chất liệu 100% cotton, sợi tre bamboo thoáng khí, bền màu qua nhiều lần giặt.</p>
+            <div class="about-value-card border rounded-4 bg-light h-100">
+                <i class="fa-solid fa-gem fa-xl text-danger mb-3"></i>
+                <h2 class="fw-bold">Thoải mái trong từng lựa chọn</h2>
+                <p class="text-secondary mb-0">Ưu tiên những thiết kế dễ mặc, tiện dụng và phù hợp với nhiều hoạt động thường ngày.</p>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="p-4 border rounded-4 bg-light h-100">
-                <i class="fa-solid fa-tags fa-2x text-danger mb-3"></i>
-                <h5 class="fw-bold">Giá Cả Hợp Lý</h5>
-                <p class="text-secondary small mb-0">Sản xuất tận xưởng, loại bỏ chi phí trung gian để đem đến mức giá tốt nhất cho khách hàng.</p>
+            <div class="about-value-card border rounded-4 bg-light h-100">
+                <i class="fa-solid fa-tags fa-xl text-danger mb-3"></i>
+                <h2 class="fw-bold">Phong cách dành cho bạn</h2>
+                <p class="text-secondary mb-0">Đa dạng kiểu dáng để bạn tự do kết hợp và tạo nên dấu ấn riêng của mình.</p>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="p-4 border rounded-4 bg-light h-100">
-                <i class="fa-solid fa-headset fa-2x text-danger mb-3"></i>
-                <h5 class="fw-bold">Hỗ Trợ Tận Tâm</h5>
-                <p class="text-secondary small mb-0">Đội ngũ CSKH sẵn sàng tư vấn chọn size, chọn kiểu dáng 24/7 nhiệt tình và chu đáo.</p>
+            <div class="about-value-card border rounded-4 bg-light h-100">
+                <i class="fa-solid fa-headset fa-xl text-danger mb-3"></i>
+                <h2 class="fw-bold">Mua sắm dễ dàng</h2>
+                <p class="text-secondary mb-0">Thông tin sản phẩm rõ ràng, hỗ trợ bạn tìm kiểu dáng và kích cỡ phù hợp.</p>
             </div>
         </div>
     </div>

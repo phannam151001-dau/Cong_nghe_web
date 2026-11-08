@@ -1,3 +1,95 @@
+from django.contrib.messages import get_messages
 from django.test import TestCase
+from django.urls import reverse
+from cua_hang.models import DanhMuc, SanPham
 
-# Create your tests here.
+
+class ThemVaoGioTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        danh_muc = DanhMuc.objects.create(
+            ten_danh_muc='Áo Thun',
+            slug='ao-thun',
+        )
+        cls.san_pham = SanPham.objects.create(
+            danh_muc=danh_muc,
+            ten_san_pham='Áo thun kiểm thử',
+            slug='ao-thun-kiem-thu',
+            gia_ban=100000,
+            mo_ta='Sản phẩm kiểm thử',
+        )
+
+    def test_them_gio_quay_lai_danh_sach_va_giu_trang_hien_tai(self):
+        response = self.client.post(
+            reverse('gio_hang:them_vao_gio', args=[self.san_pham.id]),
+            {
+                'next': '/?page=2#khu-vuc-san-pham',
+                'so_luong': '1',
+                'kich_co': 'M',
+                'mau_sac': 'Đen',
+            },
+        )
+
+        self.assertRedirects(
+            response,
+            '/?page=2#khu-vuc-san-pham',
+            fetch_redirect_response=False,
+        )
+
+    def test_form_trong_danh_sach_gui_duong_dan_quay_lai_khu_vuc_san_pham(self):
+        response = self.client.get(reverse('cua_hang:trang_chu'))
+
+        self.assertContains(
+            response,
+            'name="next" value="/#khu-vuc-san-pham"',
+        )
+
+    def test_them_gio_tu_danh_sach_khong_can_tai_lai_trang(self):
+        response = self.client.post(
+            reverse('gio_hang:them_vao_gio', args=[self.san_pham.id]),
+            {
+                'so_luong': '1',
+                'kich_co': 'M',
+                'mau_sac': 'Đen',
+            },
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest',
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['cart_count'], 1)
+        self.assertIn(self.san_pham.ten_san_pham, response.json()['message'])
+        self.assertEqual(len(self.client.session['gio_hang']), 1)
+        self.assertEqual(list(get_messages(response.wsgi_request)), [])
+
+    def test_tu_choi_url_quay_lai_ben_ngoai(self):
+        response = self.client.post(
+            reverse('gio_hang:them_vao_gio', args=[self.san_pham.id]),
+            {
+                'next': 'https://example.com/',
+                'so_luong': '1',
+                'kich_co': 'M',
+                'mau_sac': 'Đen',
+            },
+        )
+
+        self.assertRedirects(
+            response,
+            self.san_pham.get_absolute_url(),
+            fetch_redirect_response=False,
+        )
+
+    def test_khong_co_url_quay_lai_khong_chuyen_ve_trang_chu(self):
+        response = self.client.post(
+            reverse('gio_hang:them_vao_gio', args=[self.san_pham.id]),
+            {
+                'so_luong': '1',
+                'kich_co': 'M',
+                'mau_sac': 'Đen',
+            },
+        )
+
+        self.assertRedirects(
+            response,
+            self.san_pham.get_absolute_url(),
+            fetch_redirect_response=False,
+        )

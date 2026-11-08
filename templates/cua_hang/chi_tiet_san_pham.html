@@ -38,11 +38,13 @@
                     <span class="fs-5 text-muted text-decoration-line-through ms-3">{{ san_pham.gia_goc|intcomma }}₫</span>
                     <span class="badge bg-danger ms-2">-{{ san_pham.phan_tram_giam_gia }}%</span>
                 {% endif %}
+                <span class="badge bg-success ms-2">Còn {{ san_pham.so_luong_kho }}</span>
             </div>
 
             <!-- Form thêm vào giỏ hàng -->
             <form action="{% url 'gio_hang:them_vao_gio' san_pham.id %}" method="POST" class="mb-4">
                 {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.get_full_path }}">
 
                 <!-- Tùy chọn Size -->
                 <div class="mb-3">

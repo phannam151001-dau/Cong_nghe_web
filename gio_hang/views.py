@@ -1,5 +1,7 @@
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from django.utils.http import url_has_allowed_host_and_scheme
 from cua_hang.models import SanPham
 from .xu_ly_gio_hang import GioHang
 from .models import DonHang, ChiTietDonHang
@@ -21,13 +23,26 @@ def them_vao_gio(request, ma_san_pham):
         kich_co = request.POST.get('kich_co', 'M')
         mau_sac = request.POST.get('mau_sac', '')
         gio.them_san_pham(san_pham=san_pham, so_luong=so_luong, kich_co=kich_co, mau_sac=mau_sac)
-        messages.success(request, f'Đã thêm "{san_pham.ten_san_pham}" (Size: {kich_co}) vào giỏ hàng!')
 
         hanh_dong = request.POST.get('hanh_dong')
         if hanh_dong == 'mua_ngay':
+            messages.success(request, f'Đã thêm "{san_pham.ten_san_pham}" (Size: {kich_co}) vào giỏ hàng!')
             return redirect('gio_hang:xem_gio_hang')
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({
+                'message': f'Đã thêm "{san_pham.ten_san_pham}" vào giỏ hàng!',
+                'cart_count': len(gio),
+            })
+        messages.success(request, f'Đã thêm "{san_pham.ten_san_pham}" (Size: {kich_co}) vào giỏ hàng!')
 
-    return redirect(request.META.get('HTTP_REFERER', 'cua_hang:trang_chu'))
+    url_quay_lai = request.POST.get('next') or request.META.get('HTTP_REFERER', '')
+    if url_has_allowed_host_and_scheme(
+        url=url_quay_lai,
+        allowed_hosts={request.get_host()},
+        require_https=request.is_secure(),
+    ):
+        return redirect(url_quay_lai)
+    return redirect(san_pham.get_absolute_url())
 
 
 def cap_nhat_so_luong(request):

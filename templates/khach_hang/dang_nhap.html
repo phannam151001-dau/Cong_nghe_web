@@ -2,11 +2,14 @@
 
 {% block title %}Đăng Nhập Khách Hàng - Fashion Store{% endblock %}
 
+{% block footer %}{% endblock %}
+
 {% block content %}
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-5">
-            <div class="card border-0 shadow rounded-4 p-4 p-md-5">
+<section class="auth-background">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="card auth-card border-0 shadow-lg rounded-4 p-4 p-md-5">
                 <div class="text-center mb-4">
                     <div class="rounded-circle bg-dark-subtle text-dark d-inline-flex p-3 mb-2">
                         <i class="fa-solid fa-right-to-bracket fa-2x"></i>
@@ -45,8 +48,9 @@
                         Chưa có tài khoản? <a href="{% url 'khach_hang:dang_ky' %}" class="text-danger fw-bold text-decoration-none">Đăng ký thành viên mới</a>
                     </div>
                 </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
+</section>
 {% endblock %}
