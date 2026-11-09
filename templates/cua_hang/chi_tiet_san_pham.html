@@ -34,7 +34,7 @@
             <!-- Giá bán -->
             <div class="d-flex align-items-center mb-4">
                 <span class="display-6 fw-bold text-danger">{{ san_pham.gia_ban|intcomma }}₫</span>
-                {% if san_pham.gia_goc %}
+                {% if san_pham.phan_tram_giam_gia > 0 %}
                     <span class="fs-5 text-muted text-decoration-line-through ms-3">{{ san_pham.gia_goc|intcomma }}₫</span>
                     <span class="badge bg-danger ms-2">-{{ san_pham.phan_tram_giam_gia }}%</span>
                 {% endif %}

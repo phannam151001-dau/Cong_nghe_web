@@ -2,6 +2,7 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db import transaction
 from django.utils.http import url_has_allowed_host_and_scheme
 from cua_hang.models import SanPham
 from .xu_ly_gio_hang import GioHang
@@ -101,26 +102,67 @@ def thanh_toan(request):
 
         khach_hang_user = request.user if request.user.is_authenticated else None
 
-        don_hang = DonHang.objects.create(
-            khach_hang=khach_hang_user,
-            ten_khach_hang=ten_khach_hang,
-            so_dien_thoai=so_dien_thoai,
-            email=email,
-            dia_chi_giao_hang=dia_chi_giao_hang,
-            ghi_chu=ghi_chu,
-            tong_tien=gio.tong_tien()
-        )
+        with transaction.atomic():
+            so_luong_theo_san_pham = {}
+            for item in gio.gio_hang.values():
+                ma_san_pham = item['ma_san_pham']
+                so_luong_theo_san_pham[ma_san_pham] = (
+                    so_luong_theo_san_pham.get(ma_san_pham, 0) + item['so_luong']
+                )
 
-        for item in gio:
-            ChiTietDonHang.objects.create(
-                don_hang=don_hang,
-                san_pham=item['san_pham'],
-                ten_san_pham=item['san_pham'].ten_san_pham,
-                don_gia=item['don_gia'],
-                so_luong=item['so_luong'],
-                kich_co=item['kich_co'],
-                mau_sac=item['mau_sac']
+            san_phams = SanPham.objects.select_for_update().in_bulk(
+                so_luong_theo_san_pham
             )
+
+            het_hang_ids = [
+                ma_san_pham
+                for ma_san_pham, so_luong in so_luong_theo_san_pham.items()
+                if ma_san_pham not in san_phams
+                or san_phams[ma_san_pham].so_luong_kho < so_luong
+            ]
+            if het_hang_ids:
+                ten_san_pham = ', '.join(
+                    san_phams[ma_san_pham].ten_san_pham
+                    if ma_san_pham in san_phams
+                    else str(ma_san_pham)
+                    for ma_san_pham in het_hang_ids
+                )
+                messages.error(
+                    request,
+                    f'Sản phẩm không đủ tồn kho hoặc không còn kinh doanh: {ten_san_pham}. '
+                    'Vui lòng kiểm tra lại giỏ hàng.',
+                )
+                return render(
+                    request,
+                    'gio_hang/thanh_toan.html',
+                    {'gio_hang': gio, 'thong_tin': request.POST},
+                )
+
+            don_hang = DonHang.objects.create(
+                khach_hang=khach_hang_user,
+                ten_khach_hang=ten_khach_hang,
+                so_dien_thoai=so_dien_thoai,
+                email=email,
+                dia_chi_giao_hang=dia_chi_giao_hang,
+                ghi_chu=ghi_chu,
+                tong_tien=gio.tong_tien()
+            )
+
+            for item in gio:
+                ChiTietDonHang.objects.create(
+                    don_hang=don_hang,
+                    san_pham=item['san_pham'],
+                    ten_san_pham=item['san_pham'].ten_san_pham,
+                    don_gia=item['don_gia'],
+                    so_luong=item['so_luong'],
+                    kich_co=item['kich_co'],
+                    mau_sac=item['mau_sac']
+                )
+
+            for ma_san_pham, so_luong in so_luong_theo_san_pham.items():
+                san_pham = san_phams[ma_san_pham]
+                san_pham.so_luong_kho -= so_luong
+                san_pham.save(update_fields=['so_luong_kho'])
 
         # Cập nhật địa chỉ mặc định cho khách nếu chưa có
         if request.user.is_authenticated and hasattr(request.user, 'ho_so'):

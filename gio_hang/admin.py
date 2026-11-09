@@ -1,6 +1,10 @@
+from datetime import datetime, time
 from django.contrib import admin
 from django.utils.html import format_html
-from django.urls import reverse
+from django.db.models import Count, Sum
+from django.template.response import TemplateResponse
+from django.urls import path, reverse
+from django.utils import timezone
 from .models import DonHang, ChiTietDonHang
 
 
@@ -37,6 +41,8 @@ class ChiTietDonHangInline(admin.TabularInline):
 
 @admin.register(DonHang)
 class DonHangAdmin(admin.ModelAdmin):
+    change_list_template = 'admin/gio_hang/donhang/change_list.html'
+
     list_display = [
         'ma_don_hang',
         'thong_tin_khach',
@@ -72,6 +78,80 @@ class DonHangAdmin(admin.ModelAdmin):
         }),
     ]
     inlines = [ChiTietDonHangInline]
+
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = [
+            path(
+                'thong-ke-doanh-thu/',
+                self.admin_site.admin_view(self.thong_ke_doanh_thu),
+                name='gio_hang_donhang_revenue',
+            ),
+        ]
+        return custom_urls + urls
+
+    def thong_ke_doanh_thu(self, request):
+        don_hang_hop_le = DonHang.objects.exclude(trang_thai='da_huy')
+        thang_hien_tai = timezone.localdate().replace(day=1)
+        thang_bat_dau = thang_hien_tai
+        for _ in range(11):
+            if thang_bat_dau.month == 1:
+                thang_bat_dau = thang_bat_dau.replace(
+                    year=thang_bat_dau.year - 1,
+                    month=12,
+                )
+            else:
+                thang_bat_dau = thang_bat_dau.replace(
+                    month=thang_bat_dau.month - 1,
+                )
+
+        cac_thang = []
+        thang = thang_bat_dau
+        while thang <= thang_hien_tai:
+            if thang.month == 12:
+                thang_tiep_theo = thang.replace(year=thang.year + 1, month=1)
+            else:
+                thang_tiep_theo = thang.replace(month=thang.month + 1)
+
+            thong_ke = don_hang_hop_le.filter(
+                ngay_tao__gte=timezone.make_aware(
+                    datetime.combine(thang, time.min),
+                ),
+                ngay_tao__lt=timezone.make_aware(
+                    datetime.combine(thang_tiep_theo, time.min),
+                ),
+            ).aggregate(
+                doanh_thu=Sum('tong_tien'),
+                so_don=Count('id'),
+            )
+            cac_thang.append({
+                'thang': thang,
+                'doanh_thu': thong_ke.get('doanh_thu') or 0,
+                'so_don': thong_ke.get('so_don', 0),
+            })
+            thang = thang_tiep_theo
+
+        context = {
+            **self.admin_site.each_context(request),
+            'title': 'Thống kê doanh thu đơn hàng',
+            'tong_doanh_thu': don_hang_hop_le.aggregate(
+                tong=Sum('tong_tien'),
+            )['tong'] or 0,
+            'doanh_thu_hoan_thanh': DonHang.objects.filter(
+                trang_thai='hoan_thanh',
+            ).aggregate(tong=Sum('tong_tien'))['tong'] or 0,
+            'so_don_hop_le': don_hang_hop_le.count(),
+            'so_don_da_huy': DonHang.objects.filter(
+                trang_thai='da_huy',
+            ).count(),
+            'cac_thang': cac_thang,
+            'opts': self.model._meta,
+        }
+        return TemplateResponse(
+            request,
+            'admin/gio_hang/donhang/thong_ke_doanh_thu.html',
+            context,
+        )
 
     def ma_don_hang(self, obj):
         return format_html('<strong>#HD{}</strong>', obj.id)
