@@ -1,6 +1,7 @@
 from datetime import datetime, time
 from django.contrib import admin
 from django.utils.html import format_html
+from cua_hang.formatters import format_vnd
 from django.db.models import Count, Sum
 from django.template.response import TemplateResponse
 from django.urls import path, reverse
@@ -27,13 +28,13 @@ class ChiTietDonHangInline(admin.TabularInline):
 
     def don_gia_vnd(self, obj):
         if obj and obj.don_gia is not None:
-            return f"{obj.don_gia:,.0f}₫"
+            return f"{format_vnd(obj.don_gia)}₫"
         return "0₫"
     don_gia_vnd.short_description = "Đơn giá"
 
     def thanh_tien_vnd(self, obj):
         if obj and obj.id:
-            tien_str = f"{obj.tinh_thanh_tien():,.0f}₫"
+            tien_str = f"{format_vnd(obj.tinh_thanh_tien())}₫"
             return format_html('<strong style="color: #dc3545;">{}</strong>', tien_str)
         return "0₫"
     thanh_tien_vnd.short_description = "Thành tiền"
@@ -192,7 +193,7 @@ class DonHangAdmin(admin.ModelAdmin):
 
     def tong_tien_vnd(self, obj):
         if obj and obj.tong_tien is not None:
-            tien_str = f"{obj.tong_tien:,.0f}₫"
+            tien_str = f"{format_vnd(obj.tong_tien)}₫"
             return format_html('<strong style="color: #dc3545; font-size: 14px;">{}</strong>', tien_str)
         return "0₫"
     tong_tien_vnd.short_description = "Tổng tiền"
@@ -253,13 +254,13 @@ class ChiTietDonHangAdmin(admin.ModelAdmin):
 
     def don_gia_vnd(self, obj):
         if obj and obj.don_gia is not None:
-            return f"{obj.don_gia:,.0f}₫"
+            return f"{format_vnd(obj.don_gia)}₫"
         return "0₫"
     don_gia_vnd.short_description = "Đơn giá"
 
     def thanh_tien_vnd(self, obj):
         if obj and obj.id:
-            tien_str = f"{obj.tinh_thanh_tien():,.0f}₫"
+            tien_str = f"{format_vnd(obj.tinh_thanh_tien())}₫"
             return format_html('<strong style="color: #dc3545;">{}</strong>', tien_str)
         return "0₫"
     thanh_tien_vnd.short_description = "Thành tiền"

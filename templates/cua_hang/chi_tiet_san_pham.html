@@ -1,5 +1,5 @@
 {% extends "bo_cuc_chung.html" %}
-{% load humanize %}
+{% load tien_te %}
 
 {% block title %}{{ san_pham.ten_san_pham }} - Fashion Store{% endblock %}
 
@@ -33,9 +33,9 @@
 
             <!-- Giá bán -->
             <div class="d-flex align-items-center mb-4">
-                <span class="display-6 fw-bold text-danger">{{ san_pham.gia_ban|intcomma }}₫</span>
+                <span class="display-6 fw-bold text-danger">{{ san_pham.gia_ban|vnd }}₫</span>
                 {% if san_pham.phan_tram_giam_gia > 0 %}
-                    <span class="fs-5 text-muted text-decoration-line-through ms-3">{{ san_pham.gia_goc|intcomma }}₫</span>
+                    <span class="fs-5 text-muted text-decoration-line-through ms-3">{{ san_pham.gia_goc|vnd }}₫</span>
                     <span class="badge bg-danger ms-2">-{{ san_pham.phan_tram_giam_gia }}%</span>
                 {% endif %}
                 <span class="badge bg-success ms-2">Còn {{ san_pham.so_luong_kho }}</span>
@@ -151,7 +151,7 @@
                         <h6 class="fw-bold text-truncate mb-2">
                             <a href="{{ sp_lq.get_absolute_url }}" class="text-dark text-decoration-none">{{ sp_lq.ten_san_pham }}</a>
                         </h6>
-                        <span class="price-current mt-auto">{{ sp_lq.gia_ban|intcomma }}₫</span>
+                        <span class="price-current mt-auto">{{ sp_lq.gia_ban|vnd }}₫</span>
                     </div>
                 </div>
             </div>

@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
+from .formatters import format_vnd
 from .models import DanhMuc, SanPham
 
 
@@ -46,12 +47,12 @@ class SanPhamAdmin(admin.ModelAdmin):
     anh_san_pham.short_description = "Ảnh"
 
     def gia_ban_vnd(self, obj):
-        gia_str = f"{obj.gia_ban:,.0f}₫"
+        gia_str = f"{format_vnd(obj.gia_ban)}₫"
         return format_html('<strong style="color: #dc3545;">{}</strong>', gia_str)
     gia_ban_vnd.short_description = "Giá bán"
 
     def gia_goc_vnd(self, obj):
         if obj.gia_goc:
-            return f"{obj.gia_goc:,.0f}₫"
+            return f"{format_vnd(obj.gia_goc)}₫"
         return "-"
     gia_goc_vnd.short_description = "Giá gốc"

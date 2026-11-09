@@ -1,5 +1,5 @@
 {% extends "bo_cuc_chung.html" %}
-{% load humanize %}
+{% load tien_te %}
 
 {% block title %}Lịch Sử Hóa Đơn & Đơn Mua - Fashion Store{% endblock %}
 
@@ -46,7 +46,7 @@
                     </div>
                     <div>
                         <div class="text-secondary small">Tổng tiền đã chi</div>
-                        <div class="h4 fw-bold mb-0 text-danger">{{ tong_tien_da_mua|intcomma }}₫</div>
+                        <div class="h4 fw-bold mb-0 text-danger">{{ tong_tien_da_mua|vnd }}₫</div>
                     </div>
                 </div>
             </div>
@@ -89,7 +89,7 @@
                             </div>
                         </td>
                         <td>
-                            <span class="fw-bold text-danger">{{ dh.tong_tien|intcomma }}₫</span>
+                            <span class="fw-bold text-danger">{{ dh.tong_tien|vnd }}₫</span>
                         </td>
                         <td>
                             {% if dh.trang_thai == 'cho_xac_nhan' %}

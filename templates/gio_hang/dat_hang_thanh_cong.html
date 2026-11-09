@@ -1,5 +1,5 @@
 {% extends "bo_cuc_chung.html" %}
-{% load humanize %}
+{% load tien_te %}
 
 {% block title %}Đặt Hàng Thành Công #{{ don_hang.id }} - Fashion Store{% endblock %}
 
@@ -39,12 +39,12 @@
                                 <span class="fw-bold text-dark">{{ item.ten_san_pham }}</span>
                                 <div class="small text-muted">Kích thước: {{ item.kich_co }}{% if item.mau_sac %}, Màu: {{ item.mau_sac }}{% endif %} x {{ item.so_luong }}</div>
                             </div>
-                            <span class="fw-bold text-danger">{{ item.tinh_thanh_tien|intcomma }}₫</span>
+                            <span class="fw-bold text-danger">{{ item.tinh_thanh_tien|vnd }}₫</span>
                         </li>
                         {% endfor %}
                         <li class="list-group-item d-flex justify-content-between align-items-center bg-light py-3">
                             <span class="fw-bold fs-6">Tổng thanh toán:</span>
-                            <span class="fs-5 fw-bold text-danger">{{ don_hang.tong_tien|intcomma }}₫</span>
+                            <span class="fs-5 fw-bold text-danger">{{ don_hang.tong_tien|vnd }}₫</span>
                         </li>
                     </ul>
                 </div>

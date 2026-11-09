@@ -1,5 +1,5 @@
 {% extends "admin/base_site.html" %}
-{% load humanize %}
+{% load tien_te %}
 
 {% block content %}
 <div class="module">
@@ -8,13 +8,13 @@
         <tbody>
             <tr>
                 <th>Doanh thu đơn không bị hủy</th>
-                <td><strong>{{ tong_doanh_thu|intcomma:False }}₫</strong></td>
+                <td><strong>{{ tong_doanh_thu|vnd }}₫</strong></td>
                 <th>Số đơn không bị hủy</th>
                 <td>{{ so_don_hop_le }}</td>
             </tr>
             <tr>
                 <th>Doanh thu đơn hoàn thành</th>
-                <td><strong>{{ doanh_thu_hoan_thanh|intcomma:False }}₫</strong></td>
+                <td><strong>{{ doanh_thu_hoan_thanh|vnd }}₫</strong></td>
                 <th>Số đơn đã hủy</th>
                 <td>{{ so_don_da_huy }}</td>
             </tr>
@@ -37,7 +37,7 @@
             <tr>
                 <td>{{ dong.thang|date:"m/Y" }}</td>
                 <td>{{ dong.so_don }}</td>
-                <td><strong>{{ dong.doanh_thu|intcomma:False }}₫</strong></td>
+                <td><strong>{{ dong.doanh_thu|vnd }}₫</strong></td>
             </tr>
             {% endfor %}
         </tbody>

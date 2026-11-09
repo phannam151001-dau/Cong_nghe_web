@@ -1,6 +1,19 @@
-from django.test import TestCase
+from decimal import Decimal
+
+from django.template import Context, Template
+from django.test import SimpleTestCase, TestCase
 from django.urls import reverse
 from .models import DanhMuc, SanPham
+
+
+class DinhDangTienTests(SimpleTestCase):
+    def test_hien_thi_vnd_voi_dau_cham_phan_tach_hang_nghin(self):
+        template = Template('{% load tien_te %}{{ amount|vnd }}₫')
+
+        self.assertEqual(
+            template.render(Context({'amount': Decimal('12345678')})),
+            '12.345.678₫',
+        )
 
 
 class PhanTrangSanPhamTests(TestCase):

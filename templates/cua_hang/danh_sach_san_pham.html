@@ -1,5 +1,5 @@
 {% extends "bo_cuc_chung.html" %}
-{% load humanize %}
+{% load tien_te %}
 
 {% block title %}
     {% if danh_muc_hien_tai %}{{ danh_muc_hien_tai.ten_danh_muc }} - Fashion Store{% else %}Cửa Hàng Quần Áo - Thời Trang Thiết Kế Hiện Đại{% endif %}
@@ -213,9 +213,9 @@
 
                     <div class="mt-auto">
                         <div class="d-flex align-items-baseline mb-2">
-                            <span class="price-current">{{ sp.gia_ban|intcomma }}₫</span>
+                            <span class="price-current">{{ sp.gia_ban|vnd }}₫</span>
                             {% if sp.gia_goc %}
-                            <span class="price-old">{{ sp.gia_goc|intcomma }}₫</span>
+                            <span class="price-old">{{ sp.gia_goc|vnd }}₫</span>
                             {% endif %}
                         </div>
 

@@ -1,5 +1,5 @@
 {% extends "bo_cuc_chung.html" %}
-{% load humanize %}
+{% load tien_te %}
 
 {% block title %}Phiếu Hóa Đơn #HD{{ don_hang.id }} - Fashion Store{% endblock %}
 
@@ -124,16 +124,16 @@
                             <span class="badge bg-light text-dark border">{{ item.kich_co }}</span>
                         </td>
                         <td class="text-center">{{ item.mau_sac|default:"Tiêu chuẩn" }}</td>
-                        <td class="text-end">{{ item.don_gia|intcomma }}₫</td>
+                        <td class="text-end">{{ item.don_gia|vnd }}₫</td>
                         <td class="text-center fw-bold">{{ item.so_luong }}</td>
-                        <td class="text-end fw-bold text-danger">{{ item.tinh_thanh_tien|intcomma }}₫</td>
+                        <td class="text-end fw-bold text-danger">{{ item.tinh_thanh_tien|vnd }}₫</td>
                     </tr>
                     {% endfor %}
                 </tbody>
                 <tfoot class="table-light">
                     <tr>
                         <td colspan="6" class="text-end fw-semibold">Tạm tính tiền hàng:</td>
-                        <td class="text-end fw-bold">{{ don_hang.tong_tien|intcomma }}₫</td>
+                        <td class="text-end fw-bold">{{ don_hang.tong_tien|vnd }}₫</td>
                     </tr>
                     <tr>
                         <td colspan="6" class="text-end fw-semibold">Phí vận chuyển giao hàng:</td>
@@ -141,7 +141,7 @@
                     </tr>
                     <tr class="table-white">
                         <td colspan="6" class="text-end fw-bold fs-5 text-dark">TỔNG TIỀN THANH TOÁN:</td>
-                        <td class="text-end fw-bold fs-5 text-danger">{{ don_hang.tong_tien|intcomma }}₫</td>
+                        <td class="text-end fw-bold fs-5 text-danger">{{ don_hang.tong_tien|vnd }}₫</td>
                     </tr>
                 </tfoot>
             </table>

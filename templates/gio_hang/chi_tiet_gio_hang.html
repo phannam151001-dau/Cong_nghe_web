@@ -1,5 +1,5 @@
 {% extends "bo_cuc_chung.html" %}
-{% load humanize %}
+{% load tien_te %}
 
 {% block title %}Giỏ Hàng Của Bạn - Fashion Store{% endblock %}
 
@@ -50,7 +50,7 @@
                                     <span class="badge bg-light text-dark border">Màu: {{ item.mau_sac }}</span>
                                     {% endif %}
                                 </td>
-                                <td class="fw-semibold text-secondary">{{ item.don_gia|intcomma }}₫</td>
+                                <td class="fw-semibold text-secondary">{{ item.don_gia|vnd }}₫</td>
                                 <td>
                                     <form action="{% url 'gio_hang:cap_nhat_so_luong' %}" method="POST" class="d-flex align-items-center">
                                         {% csrf_token %}
@@ -58,7 +58,7 @@
                                         <input type="number" name="so_luong" value="{{ item.so_luong }}" min="1" max="50" class="form-control form-control-sm text-center me-2" style="width: 65px;" onchange="this.form.submit()">
                                     </form>
                                 </td>
-                                <td class="fw-bold text-danger">{{ item.thanh_tien|intcomma }}₫</td>
+                                <td class="fw-bold text-danger">{{ item.thanh_tien|vnd }}₫</td>
                                 <td class="pe-4 text-end">
                                     <a href="{% url 'gio_hang:xoa_khoi_gio' item.khoa %}" class="btn btn-sm btn-outline-danger border-0 rounded-circle" title="Xóa" onclick="return confirm('Bạn có chắc muốn xóa món này khỏi giỏ?');">
                                         <i class="fa-solid fa-trash-can"></i>
@@ -85,7 +85,7 @@
                 
                 <div class="d-flex justify-content-between mb-2">
                     <span class="text-secondary">Tạm tính:</span>
-                    <span class="fw-bold">{{ gio_hang.tong_tien|intcomma }}₫</span>
+                    <span class="fw-bold">{{ gio_hang.tong_tien|vnd }}₫</span>
                 </div>
                 
                 <div class="d-flex justify-content-between mb-3">
@@ -97,7 +97,7 @@
 
                 <div class="d-flex justify-content-between align-items-baseline mb-4">
                     <span class="fw-bold fs-5">Tổng cộng:</span>
-                    <span class="fs-4 fw-bold text-danger">{{ gio_hang.tong_tien|intcomma }}₫</span>
+                    <span class="fs-4 fw-bold text-danger">{{ gio_hang.tong_tien|vnd }}₫</span>
                 </div>
 
                 <a href="{% url 'gio_hang:thanh_toan' %}" class="btn btn-danger btn-lg w-100 rounded-pill fw-bold py-3 shadow-sm">
